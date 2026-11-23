@@ -298,7 +298,7 @@ export default function AboutPage() {
       <PageHero
         badge="Registered migration agents, regulated by OMARA"
         badgeIcon={<ShieldCheck className="w-4 h-4" aria-hidden="true" />}
-        title="About Bansal Immigration: Registered Migration Agents in Melbourne and Adelaide"
+        title="About Bansal Immigration: Registered Migration Agents in Melbourne11 and Adelaide"
         intro="Australian migration decisions affect your work, your studies and the people you want beside you. Bansal Immigration helps individuals, families and employers understand the rules, choose a realistic pathway and prepare their application properly. We tell you where you stand, including when the answer is not the one you hoped for."
         actions={
           <>
