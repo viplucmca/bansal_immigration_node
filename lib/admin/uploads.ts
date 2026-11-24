@@ -39,9 +39,9 @@ export async function savePublicPdf(file: File, folder: 'blog' | 'success-storie
 async function rootPath() {
   const root = policeStorageRoot();
   try {
-    return await realpath(root);
+    return await realpath(/*turbopackIgnore: true*/ root);
   } catch {
-    return path.resolve(root);
+    return path.resolve(/*turbopackIgnore: true*/ root);
   }
 }
 
@@ -56,7 +56,7 @@ export async function resolvePoliceFile(relativePath: string) {
   const target = path.resolve(root, relativePath);
   if (!insideRoot(root, target)) return null;
   try {
-    const real = await realpath(target);
+    const real = await realpath(/*turbopackIgnore: true*/ target);
     if (!insideRoot(root, real)) return null;
     const info = await stat(real);
     if (!info.isFile()) return null;
