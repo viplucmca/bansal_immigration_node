@@ -45,8 +45,4 @@ jobs:
             next24 build
             npm11 install pm2
             pm224 restart staging-app
-
-          EOF
-            npm11 install pm2
-            pm224 restart staging-app
           EOF
