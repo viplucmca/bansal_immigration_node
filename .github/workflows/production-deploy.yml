@@ -35,9 +35,18 @@ jobs:
         run: |
           ssh -p ${{ secrets.SSH_PORT }} \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+
+            shopt -s expand_aliases
+            source ~/.bashrc
+
             cd ${{ secrets.DEPLOY_PATH }}
+
             npm11 install
             next24 build
+            npm11 install pm2
+            pm224 restart staging-app
+
+          EOF
             npm11 install pm2
             pm224 restart staging-app
           EOF
