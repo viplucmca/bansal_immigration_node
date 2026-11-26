@@ -91,8 +91,9 @@ export default function HeroLeadForm({
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success !== false) {
         setDone(true);
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'callback_submit', {
+        const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+        if (typeof gtag === 'function') {
+          gtag('event', 'callback_submit', {
             location: variant,
             help_topic: help,
           });
