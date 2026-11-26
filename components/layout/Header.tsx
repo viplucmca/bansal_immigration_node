@@ -334,6 +334,20 @@ export default function Header() {
       >
         Skip to main content
       </a>
+      <div className="bg-brand-950 text-white text-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+          <p className="font-semibold">
+            <span className="text-brand-300">Urgent:</span> Visa refused or deadline approaching?
+          </p>
+          <a
+            href={CONTACT.phoneHref}
+            className={`inline-flex items-center gap-1.5 font-bold underline underline-offset-2 decoration-brand-400 hover:text-brand-200 rounded ${focusDark}`}
+          >
+            <Phone aria-hidden="true" className="w-3.5 h-3.5" />
+            Call {CONTACT.phone}
+          </a>
+        </div>
+      </div>
       <header
         ref={headerRef}
         className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-xs"
@@ -495,7 +509,7 @@ export default function Header() {
               </ul>
               <div ref={panelRef} className="p-6 lg:p-8 overflow-y-auto min-h-[26rem]">
                 <div className="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200">
-                  <h2 className="text-lg font-bold text-brand-950">{group.label}</h2>
+                  <p className="text-lg font-bold text-brand-950">{group.label}</p>
                   <Link
                     href={group.hub.href}
                     onClick={closeAll}
@@ -511,7 +525,7 @@ export default function Header() {
                 >
                   {group.columns.map((c) => (
                     <div key={c.heading}>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">{c.heading}</h3>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">{c.heading}</p>
                       <ul>
                         {c.links.map((l) => (
                           <li key={l.href}>
@@ -545,7 +559,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-b-2xl border border-t-0 border-slate-200 shadow-2xl grid grid-cols-12 overflow-hidden">
               <div className="col-span-3 bg-brand-950 text-white p-8 flex flex-col">
-                <h2 className="mt-3 text-xl font-extrabold leading-snug">Check where you stand before you book</h2>
+                <p className="mt-3 text-xl font-extrabold leading-snug">Check where you stand before you book</p>
                 <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                   Calculators and finders give you a quick estimate. A registered agent can confirm your result.
                 </p>
@@ -564,7 +578,7 @@ export default function Header() {
                   { heading: 'Guides, police checks and forms', items: TOOLS_FORMS },
                 ].map((col) => (
                   <div key={col.heading}>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">{col.heading}</h3>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">{col.heading}</p>
                     <ul className="space-y-1">
                       {col.items.map((l) => (
                         <li key={l.href}>
@@ -602,7 +616,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-b-2xl border border-t-0 border-slate-200 shadow-2xl grid grid-cols-12 overflow-hidden">
               <div className="col-span-3 bg-brand-950 text-white p-8 flex flex-col">
-                <h2 className="mt-3 text-xl font-extrabold leading-snug">Registered migration agents in Melbourne and Adelaide</h2>
+                <p className="mt-3 text-xl font-extrabold leading-snug">Registered migration agents in Melbourne and Adelaide</p>
                 <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                   Know who is advising you, read what clients say, and see how we work.
                 </p>

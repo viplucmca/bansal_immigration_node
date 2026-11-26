@@ -32,7 +32,7 @@ const headingCls = 'text-xs font-bold uppercase tracking-[0.14em] text-brand-900
 function Column({ title, links }: { title: string; links: NavLink[] }) {
   return (
     <nav aria-label={title}>
-      <h2 className={headingCls}>{title}</h2>
+      <p className={headingCls}>{title}</p>
       <ul>
         {links.map((l) => (
           <li key={l.href}>
@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
 
           <div className="lg:col-span-4">
-            <h2 className={headingCls}>Contact us</h2>
+            <p className={headingCls}>Contact us</p>
             <ul className="space-y-1">
               <li>
                 <a href={CONTACT.phoneHref} className={`${linkCls} gap-2 font-semibold`}>
@@ -146,7 +146,7 @@ export default function Footer() {
           </div>
 
           <div className="lg:col-span-3">
-            <h2 className={headingCls}>Registered migration agents</h2>
+            <p className={headingCls}>Registered migration agents</p>
             <p className="flex items-start gap-2 text-sm leading-relaxed text-slate-700">
               <ShieldCheck aria-hidden="true" className="w-4 h-4 mt-0.5 text-brand-800 shrink-0" />
               MARN {MARNS.join(', ')}
@@ -176,7 +176,7 @@ export default function Footer() {
 
         {/* Full visa catalogue */}
         <div className="py-12 border-b border-slate-300">
-          <h2 className="text-xl font-extrabold text-brand-950">All visa services</h2>
+          <p className="text-xl font-extrabold text-brand-950">All visa services</p>
           <p className="mt-1 text-sm text-slate-600">Every visa and service we help with, by category.</p>
           <div className="mt-8 sm:columns-2 lg:columns-4 gap-x-8 space-y-3 sm:space-y-0">
             {VISA_GROUPS.map((g) => {
@@ -236,7 +236,7 @@ export default function Footer() {
           <Column title="Tools and forms" links={TOOLS} />
           <Column title="Company" links={COMPANY} />
           <nav aria-label="Standards and guides">
-            <h2 className={headingCls}>Standards and guides</h2>
+            <p className={headingCls}>Standards and guides</p>
             <ul>
               <li>
                 <a href={CODE_OF_CONDUCT} target="_blank" rel="noopener noreferrer" className={linkCls}>

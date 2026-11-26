@@ -3,7 +3,7 @@ import { PROFILES } from '@/app/team/[slug]/profiles';
 import { getAllPaths } from '@/lib/content';
 import { getBlogs, getSuccessStories } from '@/lib/db';
 
-const SITE = 'https://www.bansalimmigration.com.au';
+const SITE = 'https://bansalimmigration.com.au';
 
 const HIDDEN_PATHS = new Set([
   '/blogs/test-title',

@@ -3,12 +3,6 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import {
   GraduationCap,
-  Briefcase,
-  Heart,
-  Plane,
-  Building,
-  Scale,
-  Flag,
   Award,
   Calendar,
   ArrowRight,
@@ -18,16 +12,20 @@ import {
   Search,
   Star,
   Quote,
-  PlayCircle,
   Phone,
   Mail,
   ExternalLink,
   Clock,
+  Languages,
+  FileText,
+  BadgeCheck,
 } from "lucide-react";
 import HeroLeadForm from "@/components/home/HeroLeadForm";
 import OfficeStatus from "@/components/home/OfficeStatus";
 import HomeFaqAccordion from "@/components/home/HomeFaqAccordion";
-import FindMyVisaQuiz from "@/components/home/FindMyVisaQuiz";
+import OfficeMapReveal from "@/components/home/OfficeMapReveal";
+import LiteYouTube from "@/components/video/LiteYouTube";
+import JsonLd from "@/components/seo/JsonLd";
 import {
   container,
   card,
@@ -37,60 +35,120 @@ import {
   focusRing,
   SectionHeader,
   IconTile,
-  CtaBand,
 } from "@/components/ui/brand";
 import { fallbackSuccessStories } from "@/lib/data/fallbackSuccessStories";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT, GOOGLE_PROFILE_URL } from "@/lib/siteConfig";
+import { homeSchema } from "@/lib/seo/homeSchema";
+import { getBlogs } from "@/lib/db";
+
+const TITLE = "Registered Migration Agents Australia | Bansal Immigration";
+const DESCRIPTION =
+  "Book an appointment with OMARA-registered migration agents. Clear advice on skilled, student, partner and employer visas, in person, by phone or video.";
+const OG_IMAGE = "/img/homepage-1280.webp";
 
 export const metadata: Metadata = {
-  title: "Registered Migration Agents Melbourne | Bansal Immigration",
-  description:
-    "OMARA registered migration agents in Melbourne and Adelaide for skilled, student, partner and employer visas. Book a consultation today.",
-  alternates: {
-    canonical: "https://www.bansalimmigration.com.au",
+  title: { absolute: TITLE },
+  description: DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Bansal Immigration",
+    locale: "en_AU",
+    url: "/",
+    title: "Book a Registered Migration Agent",
+    description:
+      "Plain-English visa advice from OMARA-registered migration agents. Book in person, by phone or by video.",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Bansal Immigration: registered migration agents in Melbourne and Adelaide",
+      },
+    ],
   },
-  keywords: [
-    "registered migration agents Melbourne",
-    "migration agent Melbourne",
-    "immigration consultants Melbourne",
-    "Australian visa assistance",
-    "registered migration agents Adelaide",
-    "OMARA registered migration agent",
-    "skilled migration Melbourne",
-    "student visa agent Melbourne",
-    "partner visa agent Melbourne",
-  ],
+  twitter: {
+    card: "summary_large_image",
+    title: "Book a Registered Migration Agent",
+    description: "Plain-English visa advice from OMARA-registered migration agents.",
+    images: [OG_IMAGE],
+  },
 };
+
+export const dynamic = "force-dynamic";
 
 /* ---------------- content ---------------- */
 
-const trustItems = [
+const proofPoints = [
   {
-    title: "Registered migration agents",
-    desc: "MARN 2418466, 2418571, 2418481, 2619683, 2619533 and 2619664. Check any agent on the OMARA register.",
-    icon: ShieldCheck,
+    title: "MARN Registered",
+    desc: "Every adviser is a registered migration agent. Check the register.",
+    href: "https://portal.mara.gov.au/search-the-register-of-migration-agents/",
+    external: true,
   },
   {
-    title: "Melbourne and Adelaide",
-    desc: "Meet us in person, or by phone or video, in English, Hindi or Punjabi.",
-    icon: MapPin,
+    title: "12+ Years Experience",
+    desc: "Helping people with Australian visas.",
+    href: "/about",
+    external: false,
   },
   {
-    title: "10+ years in Australian migration",
-    desc: "Skilled, student, family, employer and review matters.",
-    icon: Briefcase,
+    title: "10,000+ Success Stories",
+    desc: "Clients we have helped.",
+    href: "/success-stories",
+    external: false,
   },
 ];
 
 const helpAreas = [
-  { title: "Study in Australia", desc: "Courses, enrolment and your student visa.", href: "/study-australia", icon: GraduationCap },
-  { title: "Skilled migration", desc: "Visas 189, 190 and 491, points and nomination.", href: "/migrate-to-australia", icon: Briefcase },
-  { title: "Partner and family visas", desc: "Partner, parent and child visas.", href: "/family-visa", icon: Heart },
-  { title: "Employer-sponsored visas", desc: "Skills in Demand 482, ENS 186 and regional visas.", href: "/employer-sponsored", icon: Building },
-  { title: "Visitor visas", desc: "Tourist, business and family visits.", href: "/visitor-visa", icon: Plane },
-  { title: "Skills assessments", desc: "Find your assessing authority.", href: "/occupation-finder", icon: Award },
-  { title: "Citizenship", desc: "By conferral or by descent.", href: "/citizenship", icon: Flag },
-  { title: "Refused or cancelled visa", desc: "Review rights, deadlines and next options.", href: "/appeals", icon: Scale },
+  {
+    title: "Skilled migration visas",
+    desc: "Subclass 189, 190 and 491, points testing and state nomination.",
+    href: "/migrate-to-australia",
+    image: "/img/blog/big-changes-to-australia-temporary-skilled-migration.webp",
+  },
+  {
+    title: "Partner and family visas",
+    desc: "Partner, parent and child visas, and the evidence you need.",
+    href: "/family-visa",
+    image: "/img/blog/Australian-Citizen-or-Permanent-Resident-for-Family-Member-Bansal-Immigration-1.webp",
+  },
+  {
+    title: "Student and graduate visas",
+    desc: "Courses, student visa applications and the Temporary Graduate (485) visa.",
+    href: "/study-australia",
+    image: "/img/blog/work-restrictions-Post-Study-1080x675.webp",
+  },
+  {
+    title: "Employer-sponsored visas",
+    desc: "Skills in Demand (482), Employer Nomination (186) and regional visas.",
+    href: "/employer-sponsored",
+    image: "/img/employer-sponosred-hero.webp",
+  },
+  {
+    title: "Visitor visas",
+    desc: "Tourist, business and family visits to Australia.",
+    href: "/visitor-visa",
+    image: "/img/Ausse-flags-hero.webp",
+  },
+  {
+    title: "Skills assessments",
+    desc: "Find the right assessing authority for your occupation.",
+    href: "/occupation-finder",
+    image: "/img/appointment-hero.webp",
+  },
+  {
+    title: "Citizenship",
+    desc: "Citizenship by conferral or by descent.",
+    href: "/citizenship",
+    image: "/img/evidence-of-citizenship-hero.webp",
+  },
+  {
+    title: "Refused or cancelled visas",
+    desc: "Review rights, strict deadlines and your next options. Call us as soon as you can.",
+    href: "/appeals",
+    image: "/img/homepage.webp",
+  },
 ];
 
 const popularVisas = [
@@ -108,16 +166,51 @@ const popularVisas = [
 
 const processSteps = [
   {
-    heading: "Tell us where you are",
-    desc: "Book an appointment or request a call back. The fee for each appointment type is shown when you book.",
+    heading: "Book Consultation",
+    desc: "Book online in about two minutes, or request a call back. The fee for your appointment type is shown before you confirm.",
   },
   {
-    heading: "Understand your options",
-    desc: "We go through your situation, the visas that may fit, the evidence you would need and any risks.",
+    heading: "Expert Advice",
+    desc: "A registered migration agent goes through your situation, the visas that may fit, the evidence you would need and any risks. You decide what to do next, with no obligation to sign anything on the day.",
   },
   {
-    heading: "Agree the work in writing",
-    desc: "If you decide to engage us, a written service agreement sets out the scope, our fees and what we need from you.",
+    heading: "Commence Your PR Pathway",
+    desc: "If you decide to go ahead, we agree the scope, our fees and what we need from you in a written service agreement, then start preparing your application.",
+  },
+];
+
+const whyChoose = [
+  {
+    title: "Registered migration agents",
+    desc: "Every adviser is on the OMARA register with a MARN you can check before you book.",
+    href: "https://portal.mara.gov.au/search-the-register-of-migration-agents/",
+    linkLabel: "Check the register",
+    external: true,
+    icon: ShieldCheck,
+  },
+  {
+    title: "Advice in your language",
+    desc: "Our team speaks English, Hindi and Punjabi, and some of us speak Gujarati.",
+    href: "/team",
+    linkLabel: "Meet the team",
+    external: false,
+    icon: Languages,
+  },
+  {
+    title: "Honest about your chances",
+    desc: "We tell you whether a pathway is realistic before you spend money on a course, assessment or application. We never promise a visa.",
+    href: "/about",
+    linkLabel: "How we work",
+    external: false,
+    icon: BadgeCheck,
+  },
+  {
+    title: "Fees in writing",
+    desc: "You see the consultation fee before you book. If you go ahead, we agree the work and fees in writing first.",
+    href: "#fees",
+    linkLabel: "See our fees",
+    external: false,
+    icon: FileText,
   },
 ];
 
@@ -130,12 +223,12 @@ const usefulTools = [
 ];
 
 const expertTeam = [
-  { name: "Arun Bansal", title: "Director and Registered Migration Agent", marn: "2418466", profileHref: "/team/arun-bansal", image: "/img/team/arun-bansal.avif" },
-  { name: "Vipul Goyal", title: "Managing Director and Migration Consultant", marn: "2418571", profileHref: "/team/vipul-goyal", image: "/img/team/vipul-goyal.avif" },
-  { name: "Mamta Puri", title: "Registered Migration Agent", marn: "2418481", profileHref: "/team/mamta-puri", image: "/img/team/mamta-puri.avif" },
-  { name: "Shubam Kumar", title: "Registered Migration Agent", marn: "2619683", profileHref: "/team/shubam-kumar", image: "/img/team/shubam-kumar.svg" },
-  { name: "Shaveena", title: "Registered Migration Agent", marn: "2619533", profileHref: "/team/shaveena", image: "/img/team/shaveena.svg" },
-  { name: "Celesty Parmar", title: "Registered Migration Agent", marn: "2619664", profileHref: "/team/celesty-parmar", image: "/img/team/celesty-parmar.svg" },
+  { name: "Arun Bansal", title: "Director and Registered Migration Agent", marn: "2418466", languages: "English, Hindi, Punjabi", profileHref: "/team/arun-bansal", image: "/img/team/arun-bansal.avif" },
+  { name: "Vipul Goyal", title: "Managing Director and Migration Consultant", marn: "2418571", languages: "English, Hindi", profileHref: "/team/vipul-goyal", image: "/img/team/vipul-goyal.avif" },
+  { name: "Mamta Puri", title: "Registered Migration Agent", marn: "2418481", languages: "English, Hindi", profileHref: "/team/mamta-puri", image: "/img/team/mamta-puri.avif" },
+  { name: "Shubam Kumar", title: "Registered Migration Agent", marn: "2619683", languages: "English, Hindi, Punjabi", profileHref: "/team/shubam-kumar", image: "/img/team/shubam-kumar.svg" },
+  { name: "Shaveena", title: "Registered Migration Agent", marn: "2619533", languages: "English, Hindi, Punjabi", profileHref: "/team/shaveena", image: "/img/team/shaveena.svg" },
+  { name: "Celesty Parmar", title: "Registered Migration Agent", marn: "2619664", languages: "English, Hindi, Gujarati", profileHref: "/team/celesty-parmar", image: "/img/team/celesty-parmar.svg" },
 ];
 
 const verifiedReviews = [
@@ -165,25 +258,45 @@ const verifiedReviews = [
   },
 ];
 
+const videoStoryMeta: Record<string, { title: string; summary: string }> = {
+  "student-visa-granted-in-1-month": {
+    title: "Client story: student visa, Adelaide",
+    summary: "A couple needed clear steps for student visas. We reviewed their situation, prepared the applications and kept them updated through lodgement.",
+  },
+  "482-to-186-visa-granted-indian-restaurant-owner-gets-pr-in-australia-after-11-years": {
+    title: "Client story: employer-sponsored visa, Melbourne",
+    summary: "A hospitality professional explored employer-sponsored options. We mapped the pathway from temporary work to permanent residency and prepared each stage.",
+  },
+  "visa-refusal-overturned-dependent-visa-approved-after-error-fixed": {
+    title: "Client story: visa refusal review",
+    summary: "After a dependent visa refusal, we reviewed the decision letter, identified issues to raise and helped the client understand the next steps available.",
+  },
+};
+
 const videoStories = fallbackSuccessStories
   .filter((s) => s.has_youtube && s.youtube_url)
   .slice(0, 3)
-  .map((s) => ({
-    slug: s.slug,
-    title: s.title,
-    id: /embed\/([A-Za-z0-9_-]{11})/.exec(s.youtube_url || "")?.[1] ?? "",
-  }))
+  .map((s) => {
+    const id = /embed\/([A-Za-z0-9_-]{11})/.exec(s.youtube_url || "")?.[1] ?? "";
+    const meta = videoStoryMeta[s.slug];
+    return {
+      slug: s.slug,
+      title: meta?.title || s.title,
+      summary: meta?.summary || s.excerpt || "",
+      id,
+    };
+  })
   .filter((v) => v.id);
 
 const offices = [
   {
-    name: "Melbourne head office",
+    name: "Melbourne office",
     address: "Level 8, 278 Collins Street, Melbourne VIC 3000",
     phone: "+61 3 9602 1330",
     tel: "+61396021330",
     email: "info@bansalimmigration.com.au",
     tz: "Australia/Melbourne",
-    map: "Level 8/278 Collins St, Melbourne VIC 3000",
+    map: "Level 8, 278 Collins Street, Melbourne VIC 3000",
   },
   {
     name: "Adelaide office",
@@ -192,40 +305,31 @@ const offices = [
     tel: "+61883171340",
     email: "adelaide@bansalimmigration.com.au",
     tz: "Australia/Adelaide",
-    map: "Unit 5, 55 Gawler Pl, Adelaide SA 5000",
+    map: "Unit 5, 55 Gawler Place, Adelaide SA 5000",
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": ["LegalService", "ProfessionalService"],
-  name: "Bansal Immigration",
-  image: "https://www.bansalimmigration.com.au/img/logo/logo.webp",
-  url: "https://www.bansalimmigration.com.au",
-  telephone: "+61-3-9602-1330",
-  email: "info@bansalimmigration.com.au",
-  priceRange: "$$",
-  address: [
-    {
-      "@type": "PostalAddress",
-      streetAddress: "Level 8/278 Collins St",
-      addressLocality: "Melbourne",
-      addressRegion: "VIC",
-      postalCode: "3000",
-      addressCountry: "AU",
-    },
-    {
-      "@type": "PostalAddress",
-      streetAddress: "Unit 5, 55 Gawler Pl",
-      addressLocality: "Adelaide",
-      addressRegion: "SA",
-      postalCode: "5000",
-      addressCountry: "AU",
-    },
-  ],
-};
+function guessCategory(title: string, keywords?: string | null) {
+  const hay = `${title} ${keywords || ""}`.toLowerCase();
+  if (hay.includes("student") || hay.includes("485") || hay.includes("study")) return "Student";
+  if (hay.includes("partner") || hay.includes("family") || hay.includes("spouse")) return "Partner";
+  if (hay.includes("employer") || hay.includes("482") || hay.includes("186") || hay.includes("sponsor")) return "Employer";
+  if (hay.includes("skilled") || hay.includes("189") || hay.includes("190") || hay.includes("491") || hay.includes("points")) return "Skilled";
+  return "Policy";
+}
 
-/* ---------------- page ---------------- */
+function resolveBlogImage(imgName?: string | null) {
+  if (!imgName) return null;
+  if (imgName.startsWith("http://") || imgName.startsWith("https://") || imgName.startsWith("/")) return imgName;
+  return `/img/blog/${imgName}`;
+}
+
+function formatDate(dateStr?: string | null) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+}
 
 function RatingLine({ className = "" }: { className?: string }) {
   const text = `Rated ${GOOGLE_RATING} out of 5 on Google${GOOGLE_REVIEW_COUNT ? ` from ${GOOGLE_REVIEW_COUNT} reviews` : ""}`;
@@ -251,108 +355,109 @@ function RatingLine({ className = "" }: { className?: string }) {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  let newsPosts: Awaited<ReturnType<typeof getBlogs>> = [];
+  try {
+    newsPosts = (await getBlogs()).slice(0, 3);
+  } catch {
+    newsPosts = [];
+  }
+
   return (
     <div className="bg-white text-slate-700">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <JsonLd data={homeSchema} />
 
-      {/* 1. HERO with call-back form */}
+      {/* 3.2 HERO */}
       <section id="top" className="bg-brand-50 text-slate-900 border-b border-slate-200 scroll-mt-20">
-        <div className={`${container} pt-12 pb-24 lg:pt-16 lg:pb-32`}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className={`${container} pt-12 pb-16 lg:pt-16 lg:pb-20`}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             <div className="lg:col-span-7">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-brand-900">
-                Registered Migration Agents in{" "}
-                <span className="underline decoration-brand-600 decoration-4 underline-offset-[10px]">Melbourne</span>
+              <p className="text-sm font-bold tracking-wide text-brand-800">OMARA-registered migration agents</p>
+              <h1 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-brand-900">
+                Registered Migration Agents for Your Australian Visa
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-slate-600 max-w-xl">
-                Straight answers on skilled, student, partner and employer visas from registered migration agents in
-                Melbourne and Adelaide. Tell us your situation and we will explain your options in plain English.
+                Get clear, honest advice on your skilled, student, partner or employer visa from OMARA-registered
+                migration agents. From first question to final decision, we guide you through each step of your visa
+                pathway.
               </p>
 
-              <div className="mt-8">
-                <p className="text-sm font-bold text-slate-900">Your advisers</p>
-                <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-4">
-                  {expertTeam.map((a) => (
-                    <li key={a.name}>
-                      <Link href={a.profileHref} className={`group flex items-center gap-3 rounded-lg ${focusRing}`}>
-                        <span className="relative w-12 h-12 rounded-full overflow-hidden bg-brand-100 border border-slate-200 shrink-0">
-                          <Image src={a.image} alt="" fill sizes="48px" className="object-cover object-top" />
-                        </span>
-                        <span className="leading-tight">
-                          <span className="block text-sm font-bold text-slate-900 group-hover:underline underline-offset-4 decoration-brand-600 decoration-2">
-                            {a.name}
-                          </span>
-                          {a.marn && <span className="block text-xs text-slate-600">MARN {a.marn}</span>}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+              <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3">
+                <Link href="/book-an-appointment" className={btnPrimaryLight}>
+                  <Calendar className="w-5 h-5" aria-hidden="true" />
+                  Book a Consultation
+                </Link>
               </div>
+              <p className="mt-3 text-sm text-slate-600">Takes about two minutes. You see the fee before you confirm.</p>
             </div>
 
             <div className="lg:col-span-5">
-              <HeroLeadForm />
+              <HeroLeadForm variant="hero" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. TRUST STRIP */}
-      <section aria-label="Why you can trust us" className="relative z-10 -mt-12">
+      {/* Proof points under hero */}
+      <section aria-label="Why you can trust us" className="relative z-10 -mt-8">
         <div className={container}>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_40px_-20px_rgba(26,26,43,0.35)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-            {trustItems.map((item) => (
-              <div key={item.title} className="flex items-start gap-4 p-6">
-                <IconTile icon={item.icon} />
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 leading-snug">{item.title}</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_40px_-20px_rgba(26,26,43,0.35)] grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            {proofPoints.map((item) => {
+              const content = (
+                <>
+                  <p className="text-sm font-bold text-slate-900 leading-snug">{item.title}</p>
                   <p className="mt-1 text-sm text-slate-600 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-            <div className="flex items-start gap-4 p-6">
-              <IconTile icon={Star} />
-              <div>
-                <h2 className="text-sm font-bold text-slate-900 leading-snug">
-                  Rated {GOOGLE_RATING} out of 5 on Google
-                </h2>
-                <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                  {GOOGLE_REVIEW_COUNT ? `From ${GOOGLE_REVIEW_COUNT} client reviews. ` : ""}
-                  {GOOGLE_PROFILE_URL ? (
-                    <a href={GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-800 underline underline-offset-4 decoration-brand-600 decoration-2">
-                      Read them on Google<span className="sr-only"> (opens in a new tab)</span>
-                    </a>
-                  ) : (
-                    <Link href="/testimonials" className="font-semibold text-brand-800 underline underline-offset-4 decoration-brand-600 decoration-2">
-                      Read client reviews
-                    </Link>
-                  )}
-                </p>
-              </div>
-            </div>
+                </>
+              );
+              return item.external ? (
+                <a
+                  key={item.title}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`block p-6 hover:bg-brand-50/60 ${focusRing}`}
+                >
+                  {content}
+                </a>
+              ) : (
+                <Link key={item.title} href={item.href} className={`block p-6 hover:bg-brand-50/60 ${focusRing}`}>
+                  {content}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 3. WHAT DO YOU NEED HELP WITH */}
+      {/* 3.3 Visa services */}
       <section id="pathways" className="pt-20 pb-16 lg:pt-28 lg:pb-24 scroll-mt-20">
         <div className={container}>
           <SectionHeader
-            title="What do you need help with?"
-            lede="Choose the area closest to your situation and we will show you the options."
+            title="Your Path to Australia Starts Here"
+            lede="Choose the area closest to your situation. Each page explains who can apply, the steps involved and how we can help."
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {helpAreas.map((p) => (
-              <Link key={p.title} href={p.href} className={`group ${card} ${cardHover} p-6 flex flex-col ${focusRing}`}>
-                <IconTile icon={p.icon} />
-                <h3 className="mt-5 text-lg font-bold text-slate-900 leading-snug">{p.title}</h3>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{p.desc}</p>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 group-hover:text-brand-950">
-                  See options
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
-                </span>
+              <Link
+                key={p.title}
+                href={p.href}
+                className={`group relative block overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700`}
+              >
+                <Image
+                  src={p.image}
+                  alt=""
+                  width={640}
+                  height={400}
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                  className="absolute inset-0 -z-0 h-full w-full object-cover opacity-20 transition-opacity duration-300 motion-reduce:transition-none [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-focus-visible:opacity-100"
+                />
+                <div className="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity motion-reduce:transition-none [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-focus-visible:opacity-100" />
+                <h3 className="relative font-bold text-slate-900 group-hover:text-white group-focus-visible:text-white">
+                  {p.title}
+                </h3>
+                <p className="relative mt-2 text-sm text-slate-600 group-hover:text-white group-focus-visible:text-white leading-relaxed">
+                  {p.desc}
+                </p>
               </Link>
             ))}
           </div>
@@ -375,24 +480,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3b. FIND MY VISA QUIZ */}
-      <section id="find-my-visa" className="py-16 lg:py-24 bg-brand-50 border-y border-brand-100 scroll-mt-20">
+      {/* 3.5 Urgent panel */}
+      <section id="urgent" className="py-16 lg:py-24 bg-brand-950 text-white scroll-mt-20">
         <div className={container}>
-          <SectionHeader
-            title="Not sure which visa? Find your starting point"
-            lede="Answer two or three quick questions and we will point you to the pages that may fit."
-            align="center"
-          />
-          <div className="mt-10">
-            <FindMyVisaQuiz />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            <div className="lg:col-span-6">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                Visa refused or deadline approaching? Speak to an agent today.
+              </h2>
+              <ul className="mt-8 space-y-3 text-slate-200 leading-relaxed">
+                <li>Review rights have strict deadlines, sometimes only days.</li>
+                <li>A refusal, cancellation notice or looming deadline is stressful. You don’t have to face it alone.</li>
+                <li>An agent reads your decision letter and explains what it means.</li>
+                <li>You learn what can be done next.</li>
+                <li>A registered migration agent calls you back.</li>
+              </ul>
+              <p className="mt-6 text-sm text-slate-400 leading-relaxed">
+                Have your decision letter, passport and visa details ready. A call-back does not extend any legal
+                deadline, so do not wait. We cannot guarantee the outcome of any review, appeal or application.
+              </p>
+            </div>
+            <div className="lg:col-span-6">
+              <HeroLeadForm variant="urgent" defaultHelp="Visa refused or cancelled" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4. HOW IT WORKS */}
+      {/* 3.6 How it works */}
       <section className="py-16 lg:py-24 bg-slate-50 border-y border-slate-200/70">
         <div className={container}>
-          <SectionHeader title="How it works" lede="Three clear stages, so you always know what happens next." />
+          <SectionHeader
+            title="Start Your Visa Journey in Three Simple Steps"
+            lede="Three clear steps, so you always know what happens next."
+          />
           <ol className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative">
             <div aria-hidden="true" className="hidden md:block absolute top-6 left-[8%] right-[8%] h-px bg-brand-200" />
             {processSteps.map((step, idx) => (
@@ -405,12 +526,8 @@ export default function HomePage() {
               </li>
             ))}
           </ol>
-          <div className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Not sure where to begin?</h3>
-              <p className="mt-1 text-slate-600">Book a consultation and we will explain your options in plain English.</p>
-            </div>
-            <Link href="/book-an-appointment" className={`${btnPrimaryLight} shrink-0`}>
+          <div className="mt-12">
+            <Link href="/book-an-appointment" className={btnPrimaryLight}>
               <Calendar className="w-5 h-5" aria-hidden="true" />
               Book a Consultation
             </Link>
@@ -418,11 +535,95 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. REVIEWS and VIDEO STORIES */}
+      {/* 3.7 Why choose us */}
+      <section className="py-16 lg:py-24">
+        <div className={container}>
+          <SectionHeader
+            title="Why clients choose Bansal Immigration"
+            lede="Straight advice from registered migration agents, in plain English and in your language."
+          />
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {whyChoose.map((item) => (
+              <div key={item.title} className={`${card} p-6 flex flex-col`}>
+                <IconTile icon={item.icon} />
+                <h3 className="mt-5 text-lg font-bold text-slate-900">{item.title}</h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{item.desc}</p>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 ${focusRing}`}
+                  >
+                    {item.linkLabel}
+                    <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                  </a>
+                ) : (
+                  <Link href={item.href} className={`mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 ${focusRing}`}>
+                    {item.linkLabel}
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="mt-10">
+            <Link href="/book-an-appointment" className={btnPrimaryLight}>
+              <Calendar className="w-5 h-5" aria-hidden="true" />
+              Book a Consultation
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3.8 Clear fees */}
+      <section id="fees" className="py-16 lg:py-24 bg-brand-50 border-y border-brand-100 scroll-mt-20">
+        <div className={container}>
+          <SectionHeader
+            title="Know the Cost Before You Commit"
+            lede="No surprises. You know what each step costs before you commit."
+          />
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`${card} p-7`}>
+              <h3 className="text-xl font-bold text-slate-900">Free initial assessment</h3>
+              <p className="mt-3 text-slate-600 leading-relaxed">
+                A free 10-minute assessment is available for clients already in Australia.
+              </p>
+            </div>
+            <div className={`${card} p-7`}>
+              <h3 className="text-xl font-bold text-slate-900">Urgent Consultation</h3>
+              <p className="mt-3 text-slate-600 leading-relaxed">
+                A 30-minute appointment with a registered migration agent is $150.
+              </p>
+            </div>
+          </div>
+          <p className="mt-6 text-sm text-slate-600 leading-relaxed max-w-3xl">
+            Fees for visa applications depend on the visa and your situation, so we quote after your consultation.
+            Government visa charges are separate.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/book-an-appointment" className={btnPrimaryLight}>
+              <Calendar className="w-5 h-5" aria-hidden="true" />
+              Book a Consultation
+            </Link>
+            <a
+              href="/consumer_guide_english.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={btnGhostLight}
+            >
+              Read our consumer guide
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 3.9 Reviews and stories */}
       <section className="py-16 lg:py-24">
         <div className={container}>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <SectionHeader title="What our clients say" />
+            <SectionHeader title="Hear from Clients We Have Helped" />
             <RatingLine className="self-start" />
           </div>
 
@@ -446,48 +647,52 @@ export default function HomePage() {
             ))}
           </div>
 
+          {GOOGLE_PROFILE_URL && (
+            <div className="mt-8">
+              <a
+                href={GOOGLE_PROFILE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={btnGhostLight}
+              >
+                Read all Google reviews
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+              </a>
+            </div>
+          )}
+
           {videoStories.length > 0 && (
             <div className="mt-14">
               <h3 className="text-xl font-bold text-slate-900">Watch client stories</h3>
               <ul className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {videoStories.map((v) => (
                   <li key={v.slug}>
-                    <Link href={`/success-stories/${v.slug}`} className={`group block rounded-2xl ${focusRing}`}>
-                      <span className="relative block aspect-video rounded-2xl overflow-hidden bg-brand-100 border border-slate-200">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
-                          alt=""
-                          loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
-                        />
-                        <span className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                          <PlayCircle className="w-14 h-14 text-white drop-shadow" aria-hidden="true" />
-                        </span>
-                      </span>
-                      <span className="mt-3 block text-base font-semibold text-slate-900 leading-snug group-hover:underline underline-offset-4 decoration-brand-600 decoration-2">
-                        {v.title}
-                      </span>
+                    <LiteYouTube id={v.id} title={v.title} />
+                    <p className="mt-3 text-base font-semibold text-slate-900 leading-snug">{v.title}</p>
+                    <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">{v.summary}</p>
+                    <Link
+                      href={`/success-stories/${v.slug}`}
+                      className={`mt-2 inline-flex text-sm font-bold text-brand-800 hover:text-brand-950 ${focusRing}`}
+                    >
+                      Read the full story
                     </Link>
                   </li>
                 ))}
               </ul>
+              <p className="mt-6 text-sm text-slate-500">
+                Every case is different. Past results do not guarantee future outcomes.
+              </p>
+              <div className="mt-6">
+                <Link href="/success-stories" className={btnGhostLight}>
+                  View all client stories
+                </Link>
+              </div>
             </div>
           )}
-
-          <div className="mt-10 flex flex-col sm:flex-row gap-3">
-            <Link href="/testimonials" className={btnPrimaryLight}>
-              Read all reviews
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-            <Link href="/success-stories" className={btnGhostLight}>
-              See all client stories
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* 6. TOOLS */}
+      {/* 3.10 Free tools */}
       <section className="py-16 lg:py-24 bg-slate-50 border-y border-slate-200/70">
         <div className={container}>
           <SectionHeader
@@ -501,7 +706,7 @@ export default function HomePage() {
                 <h3 className="mt-5 text-base font-bold text-slate-900 leading-snug">{tool.title}</h3>
                 <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{tool.desc}</p>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 group-hover:text-brand-950">
-                  Open tool
+                  Open the {tool.title}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
                 </span>
               </Link>
@@ -510,19 +715,92 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. TEAM */}
+      {/* 3.11 Latest news */}
       <section className="py-16 lg:py-24">
+        <div className={container}>
+          <SectionHeader
+            title="Latest Immigration News"
+            lede="Stay up to date with changes that may affect your visa."
+          />
+          {newsPosts.length > 0 ? (
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+              {newsPosts.map((post) => {
+                const img = resolveBlogImage(post.image);
+                const date = formatDate(post.published_at || post.created_at);
+                const category = guessCategory(post.title, post.meta_keywords);
+                return (
+                  <article key={post.slug} className={`${card} overflow-hidden flex flex-col`}>
+                    {img && (
+                      <div className="relative aspect-[16/10] bg-brand-50">
+                        <Image src={img} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
+                      </div>
+                    )}
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-brand-800">
+                        <span>{category}</span>
+                        {date && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <time dateTime={post.published_at || post.created_at || undefined}>{date}</time>
+                          </>
+                        )}
+                      </div>
+                      <h3 className="mt-3 text-lg font-bold text-slate-900 leading-snug">
+                        <Link href={`/blogs/${post.slug}`} className={`hover:underline underline-offset-4 decoration-brand-600 ${focusRing}`}>
+                          {post.title}
+                        </Link>
+                      </h3>
+                      {post.short_description && (
+                        <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1 line-clamp-3">
+                          {post.short_description}
+                        </p>
+                      )}
+                      <Link
+                        href={`/blogs/${post.slug}`}
+                        className={`mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 ${focusRing}`}
+                      >
+                        Read more
+                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="mt-8 text-slate-600">
+              Fresh updates will appear here soon. Browse our{" "}
+              <Link href="/blogs" className={focusRing + " font-bold text-brand-800 underline underline-offset-4"}>
+                news and guides
+              </Link>
+              .
+            </p>
+          )}
+          <div className="mt-10 flex flex-col sm:flex-row gap-3">
+            <Link href="/blogs" className={btnGhostLight}>
+              View all news and updates
+            </Link>
+            <Link href="/book-an-appointment" className={btnPrimaryLight}>
+              <Calendar className="w-5 h-5" aria-hidden="true" />
+              Book a Consultation
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3.12 Team */}
+      <section className="py-16 lg:py-24 bg-slate-50 border-y border-slate-200/70">
         <div className={container}>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <SectionHeader
-              title="Meet our migration team"
-              lede="Our registered migration agents work under the Migration Agents Code of Conduct. Read each profile and check their registration yourself."
+              title="Meet our registered migration agents"
+              lede="Our agents work under the Migration Agents Code of Conduct. Read each profile and check their registration on the OMARA register."
             />
             <Link href="/team" className={btnGhostLight}>
               Meet the whole team
             </Link>
           </div>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {expertTeam.map((agent) => (
               <Link key={agent.name} href={agent.profileHref} className={`group ${card} ${cardHover} overflow-hidden flex flex-col ${focusRing}`}>
                 <div className="relative aspect-[4/5] bg-brand-50 overflow-hidden">
@@ -530,7 +808,7 @@ export default function HomePage() {
                     src={agent.image}
                     alt={`${agent.name}, ${agent.title}`}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    sizes="(min-width: 1024px) 220px, (min-width: 640px) 33vw, 50vw"
                     className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none"
                   />
                 </div>
@@ -543,6 +821,7 @@ export default function HomePage() {
                       MARN {agent.marn}
                     </p>
                   )}
+                  <p className="mt-3 text-xs text-slate-600">{agent.languages}</p>
                   <span className="mt-4 pt-4 border-t border-slate-100 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 group-hover:text-brand-950">
                     View {agent.name.split(" ")[0]}’s profile
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
@@ -554,12 +833,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 8. OFFICES */}
-      <section id="offices" className="py-16 lg:py-24 bg-brand-50 border-y border-brand-100 scroll-mt-20">
+      {/* 3.13 Offices */}
+      <section id="offices" className="py-16 lg:py-24 scroll-mt-20">
         <div className={container}>
           <SectionHeader
-            title="Visit us in Melbourne or Adelaide"
-            lede="Meet us in person, or by phone or video. Monday to Friday, 9:30 am to 6:00 pm. Closed Saturday and Sunday."
+            title="Visit our Melbourne and Adelaide offices"
+            lede="Meet us in person, or by phone or video. Monday to Friday, 9:30 am to 6:00 pm. Please book before you visit so an adviser can confirm availability."
           />
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
             {offices.map((o) => (
@@ -598,15 +877,7 @@ export default function HomePage() {
                     <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                   </a>
                 </div>
-                <div className="h-56 bg-slate-100 mt-auto">
-                  <iframe
-                    title={`Map of the ${o.name}`}
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(o.map)}&output=embed`}
-                    className="w-full h-full border-0"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </div>
+                <OfficeMapReveal name={o.name} query={o.map} />
               </div>
             ))}
           </div>
@@ -617,18 +888,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 9. FAQ */}
-      <section className="py-16 lg:py-24">
+      {/* 3.14 FAQ */}
+      <section className="py-16 lg:py-24 bg-slate-50 border-y border-slate-200/70">
         <div className={container}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             <div className="lg:col-span-4">
-              <SectionHeader title="Frequently asked questions" lede="Straight answers to the questions we hear most." />
+              <SectionHeader
+                title="Frequently asked questions"
+                lede="Straight answers to the questions we hear most. Still have a question? Send us an enquiry."
+              />
               <p className="mt-6 text-sm text-slate-600">
-                Still have a question?{" "}
                 <Link href="/contact" className={`font-bold text-brand-800 underline underline-offset-4 decoration-brand-600 decoration-2 rounded ${focusRing}`}>
                   Send us an enquiry
                 </Link>
-                .
               </p>
             </div>
             <div className="lg:col-span-8">
@@ -638,8 +910,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 10. FINAL CTA */}
-      <CtaBand />
+      {/* 3.15 Final CTA with form */}
+      <section className="relative overflow-hidden py-20 lg:py-28 bg-brand-950 text-white">
+        <div className={container}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            <div className="lg:col-span-5">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                Ready to talk about your visa?
+              </h2>
+              <p className="mt-5 text-lg text-slate-300 leading-relaxed">
+                Tell us where you are now and where you want to be. We will explain your options in plain English.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link href="/book-an-appointment" className="inline-flex items-center justify-center gap-2 min-h-12 px-6 rounded-xl font-bold text-brand-950 bg-white hover:bg-brand-50 shadow-sm transition-colors text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300">
+                  <Calendar className="w-5 h-5" aria-hidden="true" />
+                  Book a Consultation
+                </Link>
+                <a
+                  href="tel:+61396021330"
+                  className="inline-flex items-center justify-center gap-2 min-h-12 px-6 rounded-xl font-semibold text-white border border-white/35 hover:bg-white/10 transition-colors text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+                >
+                  <Phone className="w-4 h-4" aria-hidden="true" />
+                  Call +61 3 9602 1330
+                </a>
+              </div>
+              <p className="mt-8 text-xs text-slate-400 max-w-xl leading-relaxed">
+                Visa outcomes are decided by the Department of Home Affairs. Information on this site is general and does not replace personal advice.
+              </p>
+            </div>
+            <div className="lg:col-span-7">
+              <HeroLeadForm variant="final" className="text-slate-700" />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

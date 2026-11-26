@@ -89,16 +89,18 @@ const nextConfig = {
     return list;
   },
   async headers() {
-    const noIndex = [
-      {
-        key: "X-Robots-Tag",
-        value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
-      },
-    ];
+    if (process.env.NEXT_PUBLIC_SITE_ENV === "production") return [];
 
     return [
-      { source: "/", headers: noIndex },
-      { source: "/:path*", headers: noIndex },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
+          },
+        ],
+      },
     ];
   },
   async rewrites() {
