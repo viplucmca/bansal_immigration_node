@@ -43,7 +43,7 @@ export const homeSchema = [
     '@id': `${SITE}/#melbourne-office`,
     name: 'Bansal Immigration Melbourne',
     url: `${SITE}/`,
-    image: `${SITE}/img/team/team-bansal-1280.webp`,
+    image: `${SITE}/img/offices/melbourne-office.webp`,
     telephone: '+61-3-9602-1330',
     email: 'info@bansalimmigration.com.au',
     parentOrganization: { '@id': `${SITE}/#organization` },

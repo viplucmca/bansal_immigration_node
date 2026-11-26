@@ -1,12 +1,27 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Calendar, Phone } from 'lucide-react';
 import { CONTACT } from '@/lib/nav';
 
 export default function StickyMobileBar() {
+  const [covered, setCovered] = useState(false);
+
+  useEffect(() => {
+    const form = document.getElementById('hero-lead');
+    if (!form) return;
+    const observer = new IntersectionObserver(([entry]) => setCovered(entry.isIntersecting), { threshold: 0 });
+    observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 pb-[env(safe-area-inset-bottom)] lg:hidden">
+    <div
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 pb-[env(safe-area-inset-bottom)] transition-transform motion-reduce:transition-none lg:hidden ${
+        covered ? 'translate-y-full' : ''
+      }`}
+    >
       <div className="grid grid-cols-2 gap-2 p-2">
         <Link
           href="/book-an-appointment"

@@ -25,7 +25,10 @@ import OfficeStatus from "@/components/home/OfficeStatus";
 import HomeFaqAccordion from "@/components/home/HomeFaqAccordion";
 import OfficeMapReveal from "@/components/home/OfficeMapReveal";
 import LiteYouTube from "@/components/video/LiteYouTube";
+import AccreditationTicker from "@/components/home/AccreditationTicker";
+import ChecklistLead from "@/components/home/ChecklistLead";
 import JsonLd from "@/components/seo/JsonLd";
+import { latestYouTube } from "@/lib/home/latestVideos";
 import {
   container,
   card,
@@ -44,7 +47,7 @@ import { getBlogs } from "@/lib/db";
 const TITLE = "Registered Migration Agents Australia | Bansal Immigration";
 const DESCRIPTION =
   "Book an appointment with OMARA-registered migration agents. Clear advice on skilled, student, partner and employer visas, in person, by phone or video.";
-const OG_IMAGE = "/img/homepage-1280.webp";
+const OG_IMAGE = "/img/og/home-1200x630.jpg";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -105,49 +108,49 @@ const helpAreas = [
     title: "Skilled migration visas",
     desc: "Subclass 189, 190 and 491, points testing and state nomination.",
     href: "/migrate-to-australia",
-    image: "/img/blog/big-changes-to-australia-temporary-skilled-migration.webp",
+    image: "/img/services/skilled-640.webp",
   },
   {
     title: "Partner and family visas",
     desc: "Partner, parent and child visas, and the evidence you need.",
     href: "/family-visa",
-    image: "/img/blog/Australian-Citizen-or-Permanent-Resident-for-Family-Member-Bansal-Immigration-1.webp",
+    image: "/img/services/partner-640.webp",
   },
   {
     title: "Student and graduate visas",
     desc: "Courses, student visa applications and the Temporary Graduate (485) visa.",
     href: "/study-australia",
-    image: "/img/blog/work-restrictions-Post-Study-1080x675.webp",
+    image: "/img/services/student-640.webp",
   },
   {
     title: "Employer-sponsored visas",
     desc: "Skills in Demand (482), Employer Nomination (186) and regional visas.",
     href: "/employer-sponsored",
-    image: "/img/employer-sponosred-hero.webp",
+    image: "/img/services/employer-640.webp",
   },
   {
     title: "Visitor visas",
     desc: "Tourist, business and family visits to Australia.",
     href: "/visitor-visa",
-    image: "/img/Ausse-flags-hero.webp",
+    image: "/img/services/visitor-640.webp",
   },
   {
     title: "Skills assessments",
     desc: "Find the right assessing authority for your occupation.",
-    href: "/occupation-finder",
-    image: "/img/appointment-hero.webp",
+    href: "/skill-assessment",
+    image: "/img/services/skills-640.webp",
   },
   {
     title: "Citizenship",
     desc: "Citizenship by conferral or by descent.",
     href: "/citizenship",
-    image: "/img/evidence-of-citizenship-hero.webp",
+    image: "/img/services/citizenship-640.webp",
   },
   {
     title: "Refused or cancelled visas",
     desc: "Review rights, strict deadlines and your next options. Call us as soon as you can.",
     href: "/appeals",
-    image: "/img/homepage.webp",
+    image: "/img/services/appeals-640.webp",
   },
 ];
 
@@ -258,18 +261,21 @@ const verifiedReviews = [
   },
 ];
 
-const videoStoryMeta: Record<string, { title: string; summary: string }> = {
+const videoStoryMeta: Record<string, { title: string; summary: string; uploadDate: string }> = {
   "student-visa-granted-in-1-month": {
     title: "Client story: student visa, Adelaide",
     summary: "A couple needed clear steps for student visas. We reviewed their situation, prepared the applications and kept them updated through lodgement.",
+    uploadDate: "2025-02-01",
   },
   "482-to-186-visa-granted-indian-restaurant-owner-gets-pr-in-australia-after-11-years": {
     title: "Client story: employer-sponsored visa, Melbourne",
     summary: "A hospitality professional explored employer-sponsored options. We mapped the pathway from temporary work to permanent residency and prepared each stage.",
+    uploadDate: "2025-07-01",
   },
   "visa-refusal-overturned-dependent-visa-approved-after-error-fixed": {
     title: "Client story: visa refusal review",
     summary: "After a dependent visa refusal, we reviewed the decision letter, identified issues to raise and helped the client understand the next steps available.",
+    uploadDate: "2025-02-01",
   },
 };
 
@@ -283,6 +289,7 @@ const videoStories = fallbackSuccessStories
       slug: s.slug,
       title: meta?.title || s.title,
       summary: meta?.summary || s.excerpt || "",
+      uploadDate: meta?.uploadDate || (s.created_at || "").slice(0, 10),
       id,
     };
   })
@@ -297,6 +304,8 @@ const offices = [
     email: "info@bansalimmigration.com.au",
     tz: "Australia/Melbourne",
     map: "Level 8, 278 Collins Street, Melbourne VIC 3000",
+    photo: "/img/offices/melbourne-office.webp",
+    photoAlt: "Bansal Immigration team at the Melbourne office on Collins Street",
   },
   {
     name: "Adelaide office",
@@ -306,8 +315,24 @@ const offices = [
     email: "adelaide@bansalimmigration.com.au",
     tz: "Australia/Adelaide",
     map: "Unit 5, 55 Gawler Place, Adelaide SA 5000",
+    photo: "",
+    photoAlt: "",
   },
 ];
+
+function videoObject(video: { title: string; summary: string; id: string; uploadDate?: string }) {
+  if (!video.id || !video.uploadDate) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: video.title,
+    description: video.summary,
+    thumbnailUrl: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+    uploadDate: video.uploadDate,
+    embedUrl: `https://www.youtube.com/embed/${video.id}`,
+    publisher: { "@id": "https://bansalimmigration.com.au/#organization" },
+  };
+}
 
 function guessCategory(title: string, keywords?: string | null) {
   const hay = `${title} ${keywords || ""}`.toLowerCase();
@@ -362,10 +387,25 @@ export default async function HomePage() {
   } catch {
     newsPosts = [];
   }
+  const channelVideos = await latestYouTube(3);
+  const newestBlog = newsPosts[0];
+  const newestBlogTime = new Date(newestBlog?.published_at || newestBlog?.created_at || 0).getTime();
+  const blogsAreCurrent = Number.isFinite(newestBlogTime) && Date.now() - newestBlogTime < 1000 * 60 * 60 * 24 * 120;
+  const videoSchema = [
+    ...videoStories.map((video) => videoObject(video)),
+    ...channelVideos.map((video) =>
+      videoObject({
+        id: video.id,
+        title: video.title,
+        summary: video.summary || video.title,
+        uploadDate: video.published,
+      }),
+    ),
+  ].filter(Boolean);
 
   return (
     <div className="bg-white text-slate-700">
-      <JsonLd data={homeSchema} />
+      <JsonLd data={[...homeSchema, ...videoSchema]} />
 
       {/* 3.2 HERO */}
       <section id="top" className="bg-brand-50 text-slate-900 border-b border-slate-200 scroll-mt-20">
@@ -428,6 +468,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <AccreditationTicker />
 
       {/* 3.3 Visa services */}
       <section id="pathways" className="pt-20 pb-16 lg:pt-28 lg:pb-24 scroll-mt-20">
@@ -712,6 +754,7 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+          <ChecklistLead />
         </div>
       </section>
 
@@ -722,16 +765,16 @@ export default async function HomePage() {
             title="Latest Immigration News"
             lede="Stay up to date with changes that may affect your visa."
           />
-          {newsPosts.length > 0 ? (
+          {blogsAreCurrent ? (
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
               {newsPosts.map((post) => {
                 const img = resolveBlogImage(post.image);
                 const date = formatDate(post.published_at || post.created_at);
                 const category = guessCategory(post.title, post.meta_keywords);
                 return (
-                  <article key={post.slug} className={`${card} overflow-hidden flex flex-col`}>
+                  <article key={post.slug} className={`${card} flex flex-col`}>
                     {img && (
-                      <div className="relative aspect-[16/10] bg-brand-50">
+                      <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-brand-50">
                         <Image src={img} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
                       </div>
                     )}
@@ -745,15 +788,13 @@ export default async function HomePage() {
                           </>
                         )}
                       </div>
-                      <h3 className="mt-3 text-lg font-bold text-slate-900 leading-snug">
+                      <h3 className="mt-3 text-lg font-bold text-slate-900 leading-snug break-words">
                         <Link href={`/blogs/${post.slug}`} className={`hover:underline underline-offset-4 decoration-brand-600 ${focusRing}`}>
                           {post.title}
                         </Link>
                       </h3>
                       {post.short_description && (
-                        <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1 line-clamp-3">
-                          {post.short_description}
-                        </p>
+                        <p className="mt-2 text-sm text-slate-600 leading-relaxed">{post.short_description}</p>
                       )}
                       <Link
                         href={`/blogs/${post.slug}`}
@@ -768,13 +809,62 @@ export default async function HomePage() {
               })}
             </div>
           ) : (
-            <p className="mt-8 text-slate-600">
-              Fresh updates will appear here soon. Browse our{" "}
-              <Link href="/blogs" className={focusRing + " font-bold text-brand-800 underline underline-offset-4"}>
-                news and guides
-              </Link>
-              .
-            </p>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+              {channelVideos.map((video) => {
+                const date = formatDate(video.published);
+                return (
+                  <article key={video.id} className={`${card} p-6 flex flex-col`}>
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-brand-800">
+                      <span>{guessCategory(video.title)}</span>
+                      {date && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <time dateTime={video.published}>{date}</time>
+                        </>
+                      )}
+                    </div>
+                    <h3 className="mt-3 text-lg font-bold text-slate-900 leading-snug break-words">
+                      <a
+                        href={`https://www.youtube.com/watch?v=${video.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`hover:underline underline-offset-4 decoration-brand-600 ${focusRing}`}
+                      >
+                        {video.title}
+                      </a>
+                    </h3>
+                    {video.summary && <p className="mt-2 text-sm text-slate-600 leading-relaxed">{video.summary}</p>}
+                    <a
+                      href={`https://www.youtube.com/watch?v=${video.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 ${focusRing}`}
+                    >
+                      Watch update
+                      <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+          {channelVideos[0] && (
+            <div className="mt-12 max-w-3xl">
+              <h3 className="text-xl font-bold text-slate-900">Latest update</h3>
+              <div className="mt-4">
+                <LiteYouTube id={channelVideos[0].id} title={channelVideos[0].title} />
+              </div>
+              <p className="mt-3 text-base font-semibold text-slate-900 leading-snug break-words">{channelVideos[0].title}</p>
+              <a
+                href="https://www.youtube.com/@bansalimmigrationconsultants"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${btnGhostLight} mt-5`}
+              >
+                Watch more on YouTube
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+              </a>
+            </div>
           )}
           <div className="mt-10 flex flex-col sm:flex-row gap-3">
             <Link href="/blogs" className={btnGhostLight}>
@@ -843,6 +933,11 @@ export default async function HomePage() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
             {offices.map((o) => (
               <div key={o.name} className={`${card} overflow-hidden flex flex-col`}>
+                {o.photo && (
+                  <div className="relative aspect-[3/2] bg-brand-50">
+                    <Image src={o.photo} alt={o.photoAlt} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
+                  </div>
+                )}
                 <div className="p-7">
                   <div className="flex items-start justify-between gap-4">
                     <h3 className="text-xl font-bold text-slate-900">{o.name}</h3>

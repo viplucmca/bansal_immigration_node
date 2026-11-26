@@ -184,14 +184,14 @@ export default function Footer() {
               return (
                 <section key={g.id} aria-labelledby={`f-${g.id}`} className="break-inside-avoid sm:mb-10 rounded-xl border border-slate-300 bg-white sm:border-0 sm:bg-transparent">
                   <div className="flex items-center justify-between gap-2 px-4 py-1 sm:p-0">
-                    <h3 id={`f-${g.id}`} className="sm:mb-2">
+                    <p id={`f-${g.id}`} className="sm:mb-2">
                       <Link
                         href={g.hub.href}
                         className={`inline-flex items-center min-h-11 sm:min-h-0 text-sm font-bold text-brand-900 underline underline-offset-4 decoration-brand-600 decoration-2 hover:text-brand-950 rounded ${focus}`}
                       >
                         {g.label}
                       </Link>
-                    </h3>
+                    </p>
                     <button
                       type="button"
                       aria-expanded={isOpen}

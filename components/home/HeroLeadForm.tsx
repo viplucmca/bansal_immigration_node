@@ -49,7 +49,7 @@ export default function HeroLeadForm({
   const titleId = `${variant}-form-title`;
   const submitLabel = isUrgent
     ? 'Request an urgent call back'
-    : variant === 'final'
+    : variant === 'final' || tab === 'callback'
       ? 'Request a call back'
       : 'Book your consultation';
 
@@ -237,7 +237,7 @@ export default function HeroLeadForm({
 
   if (showTabs) {
     return (
-      <div className={`rounded-2xl bg-white border border-slate-200 shadow-xl p-6 sm:p-8 ${className}`}>
+      <div id={variant === 'hero' ? 'hero-lead' : undefined} className={`rounded-2xl bg-white border border-slate-200 shadow-xl p-6 sm:p-8 ${className}`}>
         <h2 id={titleId} className="text-2xl font-extrabold tracking-tight text-slate-900">
           Book your consultation
         </h2>
@@ -266,32 +266,29 @@ export default function HeroLeadForm({
           </button>
         </div>
 
-        {tab === 'book' ? (
-          <div className="mt-6" role="tabpanel">
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Choose a time that suits you. The fee for your appointment type is shown before you confirm.
-            </p>
-            <Link href="/book-an-appointment" className={`${btnPrimaryLight} w-full mt-5`}>
-              <Calendar className="w-4 h-4" aria-hidden="true" />
-              Book a Consultation
+        <div className="mt-6" role="tabpanel" hidden={tab !== 'book'}>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Choose a time that suits you. The fee for your appointment type is shown before you confirm.
+          </p>
+          <Link href="/book-an-appointment" className={`${btnPrimaryLight} w-full mt-5`}>
+            <Calendar className="w-4 h-4" aria-hidden="true" />
+            Book a Consultation
+          </Link>
+          <p className="mt-4 text-xs text-slate-500 leading-relaxed">
+            Takes about two minutes. You see the fee before you confirm.
+          </p>
+        </div>
+        <form onSubmit={submit} noValidate className="mt-6" role="tabpanel" aria-labelledby={titleId} hidden={tab !== 'callback'}>
+          <p className="mb-4 text-sm text-slate-600">Tell us how to reach you. We reply within one business day.</p>
+          {formFields}
+          <p className="mt-4 text-xs text-slate-500 leading-relaxed">
+            We use your details only to contact you about your enquiry. See our{' '}
+            <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-slate-800">
+              privacy policy
             </Link>
-            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
-              Takes about two minutes. You see the fee before you confirm.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={submit} noValidate className="mt-6" role="tabpanel" aria-labelledby={titleId}>
-            <p className="mb-4 text-sm text-slate-600">Tell us how to reach you. We reply within one business day.</p>
-            {formFields}
-            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
-              We use your details only to contact you about your enquiry. See our{' '}
-              <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-slate-800">
-                privacy policy
-              </Link>
-              .
-            </p>
-          </form>
-        )}
+            .
+          </p>
+        </form>
       </div>
     );
   }
