@@ -1,25 +1,59 @@
 import Image from 'next/image';
 
-const LOGOS = [
-  { src: '/img/registered_partner_logos/MA-Logo.webp', alt: 'Migration Alliance' },
-  { src: '/img/registered_partner_logos/mia-logo.webp', alt: 'Migration Institute of Australia' },
-  { src: '/img/registered_partner_logos/ISANA-Logo.webp', alt: 'ISANA' },
-  { src: '/img/registered_partner_logos/ICEF_logo.svg', alt: 'ICEF' },
-  { src: '/img/registered_partner_logos/IELTS_Trusted Partner Certificate.avif', alt: 'IELTS trusted partner' },
-  { src: '/img/registered_partner_logos/ECA-GROUP.webp', alt: 'ECA Group' },
+/** Placeholder partners until final logo files are on the server (6 items). */
+const DUMMY_PARTNERS = [
+  { id: 'omara', label: 'OMARA', sublabel: 'Registered agents' },
+  { id: 'mia', label: 'MIA', sublabel: 'Migration Institute' },
+  { id: 'icef', label: 'ICEF', sublabel: 'Partner agency', image: '/img/registered_partner_logos/ICEF_logo.svg' },
+  { id: 'ielts', label: 'IELTS', sublabel: 'Trusted partner' },
+  { id: 'isana', label: 'ISANA', sublabel: 'Education network' },
+  { id: 'eca', label: 'ECA', sublabel: 'Skills assessment' },
 ] as const;
 
-export default function PartnerLogosMarquee() {
+function PartnerMark({
+  partner,
+  duplicated,
+}: {
+  partner: (typeof DUMMY_PARTNERS)[number];
+  duplicated: boolean;
+}) {
+  const alt = duplicated ? '' : `${partner.label} — ${partner.sublabel}`;
+
+  if ('image' in partner && partner.image) {
+    return (
+      <span className="flex h-14 w-40 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
+        <Image
+          src={partner.image}
+          alt={alt}
+          width={120}
+          height={48}
+          className="max-h-10 w-auto object-contain"
+        />
+      </span>
+    );
+  }
+
   return (
-    <section aria-label="Accreditations and partners" className="bg-slate-50 border-y border-slate-200/80 py-8 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-bold uppercase tracking-[0.14em] text-slate-500 mb-6">
-          Accreditations and partners
-        </p>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
-          {LOGOS.map((logo) => (
-            <li key={logo.src} className="opacity-80 hover:opacity-100 transition-opacity">
-              <Image src={logo.src} alt={logo.alt} width={120} height={48} className="h-10 w-auto object-contain" />
+    <span className="flex h-14 w-40 shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-3 shadow-sm">
+      <span className="text-sm font-extrabold tracking-wide text-slate-800">{partner.label}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">{partner.sublabel}</span>
+    </span>
+  );
+}
+
+export default function PartnerLogosMarquee() {
+  const row = [...DUMMY_PARTNERS, ...DUMMY_PARTNERS];
+
+  return (
+    <section aria-label="Accreditations and partners" className="bg-slate-50 border-y border-slate-200/80 py-8">
+      <p className="text-center text-xs font-bold uppercase tracking-[0.14em] text-slate-500 px-4">
+        Accreditations and partners
+      </p>
+      <div className="accreditation-wrap mt-6 overflow-hidden">
+        <ul className="accreditation-track flex w-max items-center gap-8 px-6">
+          {row.map((partner, i) => (
+            <li key={`${partner.id}-${i}`}>
+              <PartnerMark partner={partner} duplicated={i >= DUMMY_PARTNERS.length} />
             </li>
           ))}
         </ul>
