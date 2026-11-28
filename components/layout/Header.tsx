@@ -27,7 +27,6 @@ import {
   X,
 } from 'lucide-react';
 import { COMPANY, CONTACT, TOOLS, VISA_GROUPS } from '@/lib/nav';
-import UrgentTopBar from '@/components/layout/UrgentTopBar';
 import MobileActionBar from '@/components/layout/MobileActionBar';
 import type { NavLink } from '@/lib/nav';
 
@@ -330,7 +329,6 @@ export default function Header() {
 
   return (
     <>
-      <UrgentTopBar />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-lg focus:bg-brand-700 focus:text-white focus:font-bold"
