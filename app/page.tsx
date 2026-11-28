@@ -29,7 +29,6 @@ import PartnerLogosMarquee from "@/components/home/PartnerLogosMarquee";
 import UrgentVisaPanel from "@/components/home/UrgentVisaPanel";
 import WhyChooseSection from "@/components/home/WhyChooseSection";
 import ClearFeesSection from "@/components/home/ClearFeesSection";
-import AppointmentChecklist from "@/components/home/AppointmentChecklist";
 import ClickToLoadVideo from "@/components/home/ClickToLoadVideo";
 import GoogleReviewsCarousel from "@/components/home/GoogleReviewsCarousel";
 import JsonLd from "@/components/seo/JsonLd";
@@ -264,22 +263,11 @@ export default async function HomePage() {
               </li>
             ))}
           </ol>
-          <div className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Not sure where to begin?</h3>
-              <p className="mt-1 text-slate-600">Book a consultation and we will explain your options in plain English.</p>
-            </div>
-            <Link href="/book-an-appointment" className={`${btnPrimaryLight} shrink-0`}>
-              <Calendar className="w-5 h-5" aria-hidden="true" />
-              Book a Consultation
-            </Link>
-          </div>
         </div>
       </section>
 
       <WhyChooseSection />
       <ClearFeesSection />
-      <AppointmentChecklist />
 
       {/* 5. GOOGLE REVIEWS and VIDEO STORIES */}
       <section className="py-16 lg:py-24 bg-[#f4f4f4] border-y border-slate-200/80">
