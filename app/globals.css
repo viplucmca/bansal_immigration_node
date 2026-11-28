@@ -288,3 +288,27 @@ body {
 .cms-content tr:nth-child(even) td {
   background-color: #fafbfc;
 }
+
+@keyframes accreditation-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.accreditation-track {
+  animation: accreditation-ticker 48s linear infinite;
+}
+
+.accreditation-wrap:hover .accreditation-track,
+.accreditation-wrap:focus-within .accreditation-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accreditation-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    row-gap: 1.5rem;
+  }
+}

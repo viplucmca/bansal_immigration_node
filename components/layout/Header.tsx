@@ -337,6 +337,20 @@ export default function Header() {
       >
         Skip to main content
       </a>
+      <div className="bg-brand-950 text-white text-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+          <p className="font-semibold">
+            <span className="text-brand-300">Urgent:</span> Visa refused or deadline approaching?
+          </p>
+          <a
+            href={CONTACT.phoneHref}
+            className={`inline-flex items-center gap-1.5 font-bold underline underline-offset-2 decoration-brand-400 hover:text-brand-200 rounded ${focusDark}`}
+          >
+            <Phone aria-hidden="true" className="w-3.5 h-3.5" />
+            Call {CONTACT.phone}
+          </a>
+        </div>
+      </div>
       <header
         ref={headerRef}
         className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-xs"
@@ -514,7 +528,7 @@ export default function Header() {
                 >
                   {group.columns.map((c) => (
                     <div key={c.heading}>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">{c.heading}</h3>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">{c.heading}</p>
                       <ul>
                         {c.links.map((l) => (
                           <li key={l.href}>
@@ -567,7 +581,7 @@ export default function Header() {
                   { heading: 'Guides, police checks and forms', items: TOOLS_FORMS },
                 ].map((col) => (
                   <div key={col.heading}>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">{col.heading}</h3>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">{col.heading}</p>
                     <ul className="space-y-1">
                       {col.items.map((l) => (
                         <li key={l.href}>

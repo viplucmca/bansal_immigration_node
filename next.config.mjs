@@ -90,7 +90,8 @@ const nextConfig = {
   },
   async headers() {
     if (process.env.NEXT_PUBLIC_SITE_ENV === "production") return [];
-  return [
+
+    return [
       {
         source: "/:path*",
         headers: [

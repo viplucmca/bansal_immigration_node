@@ -18,7 +18,7 @@ export default function HomeFaqAccordion({ faqs }: { faqs: HomeFaq[] }) {
         const panelId = `home-faq-panel-${idx}`;
         return (
           <div
-            key={idx}
+            key={faq.question}
             className={`rounded-2xl border bg-white transition-colors ${
               isOpen ? 'border-brand-300 shadow-sm' : 'border-slate-200 hover:border-brand-200'
             }`}

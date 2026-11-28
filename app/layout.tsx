@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import AnalyticsListener from "@/components/analytics/AnalyticsListener";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import CookieConsent from "@/components/layout/CookieConsent";
+import StickyMobileBar from "@/components/home/StickyMobileBar";
 import { TurnstileSiteKeyProvider } from "@/components/forms/TurnstileSiteKey";
 import { getTurnstileSiteKey } from "@/lib/turnstile";
 
@@ -54,7 +55,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col font-sans antialiased text-gray-900 bg-white pb-20 md:pb-0"
+        className="min-h-full flex flex-col font-sans antialiased text-gray-900 bg-white pb-16 lg:pb-0"
         suppressHydrationWarning
       >
         <TurnstileSiteKeyProvider siteKey={getTurnstileSiteKey()}>
@@ -66,6 +67,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <StickyMobileBar />
         </TurnstileSiteKeyProvider>
       </body>
     </html>
