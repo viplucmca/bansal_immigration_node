@@ -27,6 +27,8 @@ import {
   X,
 } from 'lucide-react';
 import { COMPANY, CONTACT, TOOLS, VISA_GROUPS } from '@/lib/nav';
+import UrgentTopBar from '@/components/layout/UrgentTopBar';
+import MobileActionBar from '@/components/layout/MobileActionBar';
 import type { NavLink } from '@/lib/nav';
 
 type MenuId = 'visa' | 'tools' | 'about';
@@ -328,6 +330,7 @@ export default function Header() {
 
   return (
     <>
+      <UrgentTopBar />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-lg focus:bg-brand-700 focus:text-white focus:font-bold"
@@ -495,7 +498,7 @@ export default function Header() {
               </ul>
               <div ref={panelRef} className="p-6 lg:p-8 overflow-y-auto min-h-[26rem]">
                 <div className="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200">
-                  <h2 className="text-lg font-bold text-brand-950">{group.label}</h2>
+                  <p className="text-lg font-bold text-brand-950">{group.label}</p>
                   <Link
                     href={group.hub.href}
                     onClick={closeAll}
@@ -545,7 +548,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-b-2xl border border-t-0 border-slate-200 shadow-2xl grid grid-cols-12 overflow-hidden">
               <div className="col-span-3 bg-brand-950 text-white p-8 flex flex-col">
-                <h2 className="mt-3 text-xl font-extrabold leading-snug">Check where you stand before you book</h2>
+                <p className="mt-3 text-xl font-extrabold leading-snug">Check where you stand before you book</p>
                 <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                   Calculators and finders give you a quick estimate. A registered agent can confirm your result.
                 </p>
@@ -602,7 +605,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-b-2xl border border-t-0 border-slate-200 shadow-2xl grid grid-cols-12 overflow-hidden">
               <div className="col-span-3 bg-brand-950 text-white p-8 flex flex-col">
-                <h2 className="mt-3 text-xl font-extrabold leading-snug">Registered migration agents in Melbourne and Adelaide</h2>
+                <p className="mt-3 text-xl font-extrabold leading-snug">Registered migration agents in Melbourne and Adelaide</p>
                 <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                   Know who is advising you, read what clients say, and see how we work.
                 </p>
@@ -791,6 +794,7 @@ export default function Header() {
           </div>
         </div>
       )}
+      <MobileActionBar />
     </>
   );
 }

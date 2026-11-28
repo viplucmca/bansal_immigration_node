@@ -5,10 +5,7 @@ import {
   GraduationCap,
   Briefcase,
   Heart,
-  Plane,
-  Building,
   Scale,
-  Flag,
   Award,
   Calendar,
   ArrowRight,
@@ -17,17 +14,25 @@ import {
   Calculator,
   Search,
   Star,
-  Quote,
-  PlayCircle,
   Phone,
   Mail,
   ExternalLink,
   Clock,
 } from "lucide-react";
-import HeroLeadForm from "@/components/home/HeroLeadForm";
 import OfficeStatus from "@/components/home/OfficeStatus";
 import HomeFaqAccordion from "@/components/home/HomeFaqAccordion";
-import FindMyVisaQuiz from "@/components/home/FindMyVisaQuiz";
+import ServicePathwayCard from "@/components/home/ServicePathwayCard";
+import HomeLatestNews from "@/components/home/HomeLatestNews";
+import HeroLeadForm from "@/components/home/HeroLeadForm";
+import HeroProofStrip from "@/components/home/HeroProofStrip";
+import PartnerLogosMarquee from "@/components/home/PartnerLogosMarquee";
+import UrgentVisaPanel from "@/components/home/UrgentVisaPanel";
+import WhyChooseSection from "@/components/home/WhyChooseSection";
+import ClearFeesSection from "@/components/home/ClearFeesSection";
+import AppointmentChecklist from "@/components/home/AppointmentChecklist";
+import ClickToLoadVideo from "@/components/home/ClickToLoadVideo";
+import GoogleReviewsCarousel from "@/components/home/GoogleReviewsCarousel";
+import JsonLd from "@/components/seo/JsonLd";
 import {
   container,
   card,
@@ -37,61 +42,44 @@ import {
   focusRing,
   SectionHeader,
   IconTile,
-  CtaBand,
 } from "@/components/ui/brand";
-import { fallbackSuccessStories } from "@/lib/data/fallbackSuccessStories";
+import { HOME_PATHWAYS } from "@/lib/data/homePathways";
+import { getHomeFaqs } from "@/lib/home/faqs";
+import { getSuccessStories } from "@/lib/db";
+import { buildHomeSchema } from "@/lib/seo/homeSchema";
+import { OFFICES } from "@/lib/site/offices";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT, GOOGLE_PROFILE_URL } from "@/lib/siteConfig";
 
+/** FAQs, news and success stories come from MySQL — refresh on each request. */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Registered Migration Agents Melbourne | Bansal Immigration",
+  title: "Registered Migration Agents Australia | Bansal Immigration",
   description:
-    "OMARA registered migration agents in Melbourne and Adelaide for skilled, student, partner and employer visas. Book a consultation today.",
+    "Book an appointment with OMARA-registered migration agents. Clear advice on skilled, student, partner and employer visas, in person, by phone or video.",
   alternates: {
-    canonical: "https://www.bansalimmigration.com.au",
+    canonical: "https://www.bansalimmigration.com.au/",
   },
-  keywords: [
-    "registered migration agents Melbourne",
-    "migration agent Melbourne",
-    "immigration consultants Melbourne",
-    "Australian visa assistance",
-    "registered migration agents Adelaide",
-    "OMARA registered migration agent",
-    "skilled migration Melbourne",
-    "student visa agent Melbourne",
-    "partner visa agent Melbourne",
-  ],
+  openGraph: {
+    title: "Book a Registered Migration Agent",
+    description:
+      "Plain English visa advice from OMARA registered migration agents. Book in person, by phone or by video.",
+    url: "https://www.bansalimmigration.com.au/",
+    siteName: "Bansal Immigration",
+    locale: "en_AU",
+    type: "website",
+    images: [{ url: "/img/logo/logo-og.jpg", width: 1200, height: 630, alt: "Bansal Immigration" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Book a Registered Migration Agent",
+    description:
+      "Plain English visa advice from OMARA registered migration agents. Book in person, by phone or by video.",
+    images: ["/img/logo/logo-og.jpg"],
+  },
 };
 
 /* ---------------- content ---------------- */
-
-const trustItems = [
-  {
-    title: "Registered migration agents",
-    desc: "MARN 2418466, 2418571, 2418481, 2619683, 2619533 and 2619664. Check any agent on the OMARA register.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Melbourne and Adelaide",
-    desc: "Meet us in person, or by phone or video, in English, Hindi or Punjabi.",
-    icon: MapPin,
-  },
-  {
-    title: "10+ years in Australian migration",
-    desc: "Skilled, student, family, employer and review matters.",
-    icon: Briefcase,
-  },
-];
-
-const helpAreas = [
-  { title: "Study in Australia", desc: "Courses, enrolment and your student visa.", href: "/study-australia", icon: GraduationCap },
-  { title: "Skilled migration", desc: "Visas 189, 190 and 491, points and nomination.", href: "/migrate-to-australia", icon: Briefcase },
-  { title: "Partner and family visas", desc: "Partner, parent and child visas.", href: "/family-visa", icon: Heart },
-  { title: "Employer-sponsored visas", desc: "Skills in Demand 482, ENS 186 and regional visas.", href: "/employer-sponsored", icon: Building },
-  { title: "Visitor visas", desc: "Tourist, business and family visits.", href: "/visitor-visa", icon: Plane },
-  { title: "Skills assessments", desc: "Find your assessing authority.", href: "/occupation-finder", icon: Award },
-  { title: "Citizenship", desc: "By conferral or by descent.", href: "/citizenship", icon: Flag },
-  { title: "Refused or cancelled visa", desc: "Review rights, deadlines and next options.", href: "/appeals", icon: Scale },
-];
 
 const popularVisas = [
   { label: "Skilled Independent (189)", href: "/migrate-to-australia/skilled-independent-visa-subclass-189" },
@@ -108,16 +96,16 @@ const popularVisas = [
 
 const processSteps = [
   {
-    heading: "Tell us where you are",
-    desc: "Book an appointment or request a call back. The fee for each appointment type is shown when you book.",
+    heading: "Book consultation",
+    desc: "Book online in about two minutes, or request a call back. The fee for your appointment type is shown before you confirm.",
   },
   {
-    heading: "Understand your options",
-    desc: "We go through your situation, the visas that may fit, the evidence you would need and any risks.",
+    heading: "Expert advice",
+    desc: "A registered migration agent goes through your situation, the visas that may fit, the evidence you would need and any risks. You decide what to do next, with no obligation to sign anything on the day.",
   },
   {
-    heading: "Agree the work in writing",
-    desc: "If you decide to engage us, a written service agreement sets out the scope, our fees and what we need from you.",
+    heading: "Commence your PR pathway",
+    desc: "If you decide to go ahead, we agree the scope, our fees and what we need from you in a written service agreement, then start preparing your application.",
   },
 ];
 
@@ -138,92 +126,20 @@ const expertTeam = [
   { name: "Celesty Parmar", title: "Registered Migration Agent", marn: "2619664", profileHref: "/team/celesty-parmar", image: "/img/team/celesty-parmar.svg" },
 ];
 
-const verifiedReviews = [
-  {
-    name: "Ranjita Samyal",
-    initials: "RS",
-    serviceCategory: "Skilled PR (Subclass 190)",
-    location: "Melbourne, VIC",
-    excerpt:
-      "The Bansal Immigration team provided extraordinary support throughout our PR journey. Their proactive, transparent communication and attention to detail made our migration process seamless and stress-free.",
-  },
-  {
-    name: "Vik Singh",
-    initials: "VS",
-    serviceCategory: "Student Visa (Subclass 500)",
-    location: "Adelaide, SA",
-    excerpt:
-      "From start to finish, the team was professional, supportive, and clear with every requirement. They handled my student visa application with exceptional care and kept me informed at every stage.",
-  },
-  {
-    name: "Shipra Sharma",
-    initials: "SS",
-    serviceCategory: "General Skilled Migration",
-    location: "Melbourne, VIC",
-    excerpt:
-      "I have trusted Bansal Immigration for over six years. Their strategic advice and consistent guidance have proven invaluable in achieving my Australian permanent residency goals.",
-  },
-];
-
-const videoStories = fallbackSuccessStories
-  .filter((s) => s.has_youtube && s.youtube_url)
-  .slice(0, 3)
-  .map((s) => ({
-    slug: s.slug,
-    title: s.title,
-    id: /embed\/([A-Za-z0-9_-]{11})/.exec(s.youtube_url || "")?.[1] ?? "",
-  }))
-  .filter((v) => v.id);
-
-const offices = [
-  {
-    name: "Melbourne head office",
-    address: "Level 8, 278 Collins Street, Melbourne VIC 3000",
-    phone: "+61 3 9602 1330",
-    tel: "+61396021330",
-    email: "info@bansalimmigration.com.au",
-    tz: "Australia/Melbourne",
-    map: "Level 8/278 Collins St, Melbourne VIC 3000",
-  },
-  {
-    name: "Adelaide office",
-    address: "Unit 5, 55 Gawler Place, Adelaide SA 5000",
-    phone: "+61 8 8317 1340",
-    tel: "+61883171340",
-    email: "adelaide@bansalimmigration.com.au",
-    tz: "Australia/Adelaide",
-    map: "Unit 5, 55 Gawler Pl, Adelaide SA 5000",
-  },
-];
-
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": ["LegalService", "ProfessionalService"],
-  name: "Bansal Immigration",
-  image: "https://www.bansalimmigration.com.au/img/logo/logo.webp",
-  url: "https://www.bansalimmigration.com.au",
-  telephone: "+61-3-9602-1330",
-  email: "info@bansalimmigration.com.au",
-  priceRange: "$$",
-  address: [
-    {
-      "@type": "PostalAddress",
-      streetAddress: "Level 8/278 Collins St",
-      addressLocality: "Melbourne",
-      addressRegion: "VIC",
-      postalCode: "3000",
-      addressCountry: "AU",
-    },
-    {
-      "@type": "PostalAddress",
-      streetAddress: "Unit 5, 55 Gawler Pl",
-      addressLocality: "Adelaide",
-      addressRegion: "SA",
-      postalCode: "5000",
-      addressCountry: "AU",
-    },
-  ],
-};
+function storiesToVideos(
+  stories: Awaited<ReturnType<typeof getSuccessStories>>
+) {
+  return stories
+    .filter((s) => s.has_youtube && s.youtube_url)
+    .slice(0, 3)
+    .map((s) => ({
+      slug: s.slug,
+      title: s.title,
+      id: /embed\/([A-Za-z0-9_-]{11})/.exec(s.youtube_url || "")?.[1] ?? "",
+      uploadDate: s.success_date || s.date || s.published_at || undefined,
+    }))
+    .filter((v) => v.id);
+}
 
 /* ---------------- page ---------------- */
 
@@ -251,24 +167,39 @@ function RatingLine({ className = "" }: { className?: string }) {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [faqs, successStories] = await Promise.all([getHomeFaqs(), getSuccessStories()]);
+  const videoStories = storiesToVideos(successStories);
+  const schemaVideos = videoStories.map((v) => ({
+    title: v.title,
+    youtubeId: v.id,
+    uploadDate: v.uploadDate ?? undefined,
+  }));
+  const jsonLd = buildHomeSchema(faqs, schemaVideos);
+
   return (
     <div className="bg-white text-slate-700">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <JsonLd data={jsonLd} />
 
       {/* 1. HERO with call-back form */}
       <section id="top" className="bg-brand-50 text-slate-900 border-b border-slate-200 scroll-mt-20">
         <div className={`${container} pt-12 pb-24 lg:pt-16 lg:pb-32`}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             <div className="lg:col-span-7">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-brand-900">
-                Registered Migration Agents in{" "}
-                <span className="underline decoration-brand-600 decoration-4 underline-offset-[10px]">Melbourne</span>
+              <p className="text-sm font-bold uppercase tracking-wide text-brand-800">OMARA registered migration agents</p>
+              <h1 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-brand-900">
+                Registered Migration Agents for Your Australian Visa
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-slate-600 max-w-xl">
-                Straight answers on skilled, student, partner and employer visas from registered migration agents in
-                Melbourne and Adelaide. Tell us your situation and we will explain your options in plain English.
+                Get clear, honest advice on your skilled, student, partner or employer visa from OMARA registered migration
+                agents. From first question to final decision, we guide you through each step of your visa pathway.
               </p>
+              <p className="mt-3 text-sm font-semibold text-slate-700">English · Hindi · Punjabi</p>
+              <Link href="/book-an-appointment" className={`${btnPrimaryLight} mt-6`}>
+                <Calendar className="w-5 h-5" aria-hidden="true" />
+                Book a Consultation
+              </Link>
+              <p className="mt-3 text-xs text-slate-500">Takes about two minutes. You see the fee before you confirm.</p>
 
               <div className="mt-8">
                 <p className="text-sm font-bold text-slate-900">Your advisers</p>
@@ -299,61 +230,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. TRUST STRIP */}
-      <section aria-label="Why you can trust us" className="relative z-10 -mt-12">
-        <div className={container}>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_40px_-20px_rgba(26,26,43,0.35)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-            {trustItems.map((item) => (
-              <div key={item.title} className="flex items-start gap-4 p-6">
-                <IconTile icon={item.icon} />
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 leading-snug">{item.title}</h2>
-                  <p className="mt-1 text-sm text-slate-600 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-            <div className="flex items-start gap-4 p-6">
-              <IconTile icon={Star} />
-              <div>
-                <h2 className="text-sm font-bold text-slate-900 leading-snug">
-                  Rated {GOOGLE_RATING} out of 5 on Google
-                </h2>
-                <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                  {GOOGLE_REVIEW_COUNT ? `From ${GOOGLE_REVIEW_COUNT} client reviews. ` : ""}
-                  {GOOGLE_PROFILE_URL ? (
-                    <a href={GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-800 underline underline-offset-4 decoration-brand-600 decoration-2">
-                      Read them on Google<span className="sr-only"> (opens in a new tab)</span>
-                    </a>
-                  ) : (
-                    <Link href="/testimonials" className="font-semibold text-brand-800 underline underline-offset-4 decoration-brand-600 decoration-2">
-                      Read client reviews
-                    </Link>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroProofStrip />
+      <PartnerLogosMarquee />
 
       {/* 3. WHAT DO YOU NEED HELP WITH */}
       <section id="pathways" className="pt-20 pb-16 lg:pt-28 lg:pb-24 scroll-mt-20">
         <div className={container}>
           <SectionHeader
-            title="What do you need help with?"
-            lede="Choose the area closest to your situation and we will show you the options."
+            title="Your path to Australia starts here"
+            lede="Choose the area closest to your situation. Each page explains who can apply, the steps involved and how we can help."
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {helpAreas.map((p) => (
-              <Link key={p.title} href={p.href} className={`group ${card} ${cardHover} p-6 flex flex-col ${focusRing}`}>
-                <IconTile icon={p.icon} />
-                <h3 className="mt-5 text-lg font-bold text-slate-900 leading-snug">{p.title}</h3>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{p.desc}</p>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 group-hover:text-brand-950">
-                  See options
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
-                </span>
-              </Link>
+            {HOME_PATHWAYS.map((p) => (
+              <ServicePathwayCard key={p.title} item={p} />
             ))}
           </div>
 
@@ -375,24 +264,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3b. FIND MY VISA QUIZ */}
-      <section id="find-my-visa" className="py-16 lg:py-24 bg-brand-50 border-y border-brand-100 scroll-mt-20">
-        <div className={container}>
-          <SectionHeader
-            title="Not sure which visa? Find your starting point"
-            lede="Answer two or three quick questions and we will point you to the pages that may fit."
-            align="center"
-          />
-          <div className="mt-10">
-            <FindMyVisaQuiz />
-          </div>
-        </div>
-      </section>
+      <UrgentVisaPanel />
 
       {/* 4. HOW IT WORKS */}
       <section className="py-16 lg:py-24 bg-slate-50 border-y border-slate-200/70">
         <div className={container}>
-          <SectionHeader title="How it works" lede="Three clear stages, so you always know what happens next." />
+          <SectionHeader
+            title="Start your visa journey in three simple steps"
+            lede="Three clear steps, so you always know what happens next."
+          />
           <ol className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative">
             <div aria-hidden="true" className="hidden md:block absolute top-6 left-[8%] right-[8%] h-px bg-brand-200" />
             {processSteps.map((step, idx) => (
@@ -418,72 +298,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. REVIEWS and VIDEO STORIES */}
-      <section className="py-16 lg:py-24">
-        <div className={container}>
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <SectionHeader title="What our clients say" />
-            <RatingLine className="self-start" />
-          </div>
+      <WhyChooseSection />
+      <ClearFeesSection />
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {verifiedReviews.map((rev) => (
-              <figure key={rev.name} className={`${card} p-7 flex flex-col`}>
-                <Quote className="w-9 h-9 text-brand-600" aria-hidden="true" />
-                <blockquote className="mt-4 text-base text-slate-700 leading-relaxed flex-1">{rev.excerpt}</blockquote>
-                <figcaption className="mt-6 pt-5 border-t border-slate-100 flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-brand-900 text-white font-bold text-sm flex items-center justify-center shrink-0">
-                    {rev.initials}
-                  </div>
-                  <div className="leading-tight">
-                    <div className="text-sm font-bold text-slate-900">{rev.name}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">
-                      {rev.serviceCategory} · {rev.location}
-                    </div>
-                  </div>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+      {/* 5. GOOGLE REVIEWS and VIDEO STORIES */}
+      <section className="py-16 lg:py-24 bg-[#f4f4f4] border-y border-slate-200/80">
+        <div className={container}>
+          <GoogleReviewsCarousel />
 
           {videoStories.length > 0 && (
-            <div className="mt-14">
-              <h3 className="text-xl font-bold text-slate-900">Watch client stories</h3>
-              <ul className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="mt-20 pt-16 border-t border-slate-300/60">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <SectionHeader title="Watch client stories" />
+                <RatingLine className="self-start" />
+              </div>
+              <ul className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {videoStories.map((v) => (
                   <li key={v.slug}>
-                    <Link href={`/success-stories/${v.slug}`} className={`group block rounded-2xl ${focusRing}`}>
-                      <span className="relative block aspect-video rounded-2xl overflow-hidden bg-brand-100 border border-slate-200">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
-                          alt=""
-                          loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
-                        />
-                        <span className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                          <PlayCircle className="w-14 h-14 text-white drop-shadow" aria-hidden="true" />
-                        </span>
-                      </span>
-                      <span className="mt-3 block text-base font-semibold text-slate-900 leading-snug group-hover:underline underline-offset-4 decoration-brand-600 decoration-2">
-                        {v.title}
-                      </span>
+                    <ClickToLoadVideo youtubeId={v.id} title={v.title} />
+                    <Link
+                      href={`/success-stories/${v.slug}`}
+                      className={`mt-3 block text-base font-semibold text-slate-900 leading-snug hover:underline underline-offset-4 decoration-brand-600 decoration-2 rounded ${focusRing}`}
+                    >
+                      {v.title}
                     </Link>
                   </li>
                 ))}
               </ul>
+              <div className="mt-10 flex justify-center">
+                <Link href="/success-stories" className={btnGhostLight}>
+                  View all client stories
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Link>
+              </div>
             </div>
           )}
-
-          <div className="mt-10 flex flex-col sm:flex-row gap-3">
-            <Link href="/testimonials" className={btnPrimaryLight}>
-              Read all reviews
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-            <Link href="/success-stories" className={btnGhostLight}>
-              See all client stories
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -496,12 +345,18 @@ export default function HomePage() {
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {usefulTools.map((tool) => (
-              <Link key={tool.title} href={tool.href} className={`group ${card} ${cardHover} p-6 flex flex-col ${focusRing}`}>
+              <Link
+                key={tool.title}
+                href={tool.href}
+                className={`group ${card} ${cardHover} p-6 flex flex-col ${focusRing}`}
+                data-analytics-event="tool_open"
+                data-analytics-tool={tool.title}
+              >
                 <IconTile icon={tool.icon} />
                 <h3 className="mt-5 text-base font-bold text-slate-900 leading-snug">{tool.title}</h3>
                 <p className="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{tool.desc}</p>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 group-hover:text-brand-950">
-                  Open tool
+                  Open the {tool.title}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
                 </span>
               </Link>
@@ -509,6 +364,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <AppointmentChecklist />
 
       {/* 7. TEAM */}
       <section className="py-16 lg:py-24">
@@ -562,19 +419,24 @@ export default function HomePage() {
             lede="Meet us in person, or by phone or video. Monday to Friday, 9:30 am to 6:00 pm. Closed Saturday and Sunday."
           />
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {offices.map((o) => (
+            {OFFICES.map((o) => (
               <div key={o.name} className={`${card} overflow-hidden flex flex-col`}>
                 <div className="p-7">
                   <div className="flex items-start justify-between gap-4">
                     <h3 className="text-xl font-bold text-slate-900">{o.name}</h3>
-                    <OfficeStatus timeZone={o.tz} />
+                    <OfficeStatus timeZone={o.timeZone} />
                   </div>
                   <p className="mt-3 text-base text-slate-700">{o.address}</p>
                   <dl className="mt-4 space-y-2 text-sm">
                     <div className="flex gap-3">
                       <dt className="w-14 font-semibold text-slate-900 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" aria-hidden="true" />Phone</dt>
                       <dd>
-                        <a href={`tel:${o.tel}`} className={`font-semibold text-brand-800 hover:text-brand-950 underline underline-offset-2 rounded ${focusRing}`}>
+                        <a
+                          href={`tel:${o.tel}`}
+                          className={`font-semibold text-brand-800 hover:text-brand-950 underline underline-offset-2 rounded ${focusRing}`}
+                          data-analytics-event="phone_click"
+                          data-analytics-location="offices"
+                        >
                           {o.phone}
                         </a>
                       </dd>
@@ -582,17 +444,24 @@ export default function HomePage() {
                     <div className="flex gap-3">
                       <dt className="w-14 font-semibold text-slate-900 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" aria-hidden="true" />Email</dt>
                       <dd>
-                        <a href={`mailto:${o.email}`} className={`font-semibold text-brand-800 hover:text-brand-950 underline underline-offset-2 rounded break-all ${focusRing}`}>
+                        <a
+                          href={`mailto:${o.email}`}
+                          className={`font-semibold text-brand-800 hover:text-brand-950 underline underline-offset-2 rounded break-all ${focusRing}`}
+                          data-analytics-event="email_click"
+                          data-analytics-location="offices"
+                        >
                           {o.email}
                         </a>
                       </dd>
                     </div>
                   </dl>
                   <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(o.map)}`}
+                    href={o.hasMap}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 underline underline-offset-4 decoration-brand-600 decoration-2 rounded ${focusRing}`}
+                    data-analytics-event="directions_click"
+                    data-analytics-location={o.directionsEvent}
                   >
                     Get directions<span className="sr-only"> to the {o.name} (opens in a new tab)</span>
                     <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -601,7 +470,7 @@ export default function HomePage() {
                 <div className="h-56 bg-slate-100 mt-auto">
                   <iframe
                     title={`Map of the ${o.name}`}
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(o.map)}&output=embed`}
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(o.mapQuery)}&output=embed`}
                     className="w-full h-full border-0"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
@@ -632,14 +501,13 @@ export default function HomePage() {
               </p>
             </div>
             <div className="lg:col-span-8">
-              <HomeFaqAccordion />
+              <HomeFaqAccordion faqs={faqs} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 10. FINAL CTA */}
-      <CtaBand />
+      <HomeLatestNews />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2, Phone } from 'lucide-react';
 import PhoneField from '@/components/forms/PhoneField';
 import { TurnstileField, useTurnstileSiteKey } from '@/components/forms/TurnstileField';
 import { btnPrimaryLight, fieldInput, fieldLabel, focusRing } from '@/components/ui/brand';
+import { trackEvent } from '@/lib/analytics/events';
 
 const HELP_OPTIONS = [
   'Study in Australia',
@@ -18,8 +19,14 @@ const HELP_OPTIONS = [
   'Something else',
 ];
 
-export default function HeroLeadForm() {
+type Props = {
+  embedded?: boolean;
+  location?: 'hero' | 'footer_final' | 'urgent_panel';
+};
+
+export default function HeroLeadForm({ embedded = false, location = 'hero' }: Props) {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [dial, setDial] = useState('+61');
   const [phone, setPhone] = useState('');
   const [help, setHelp] = useState(HELP_OPTIONS[0]);
@@ -39,6 +46,7 @@ export default function HeroLeadForm() {
       return;
     }
     if (!name.trim()) return setError('Please enter your name.');
+    if (!email.trim() || !email.includes('@')) return setError('Please enter a valid email address.');
     if (phone.replace(/\D/g, '').length < 6) return setError('Please enter a valid phone number.');
     if (turnstileSiteKey && !turnstileToken) return setError('Please complete the security check before sending.');
     setLoading(true);
@@ -48,10 +56,11 @@ export default function HeroLeadForm() {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
+          email: email.trim(),
           phone: `${dial} ${phone.trim()}`,
           subject: `Callback Request: ${help}`,
           message: `Visa / Service Enquiry: ${help}\nRequested from the home page.`,
-          form_source: 'homepage_hero',
+          form_source: location === 'footer_final' ? 'homepage_final' : 'homepage_hero',
           form_variant: 'callback',
           website_honeypot: honeypot,
           cf_turnstile_response: turnstileToken,
@@ -60,9 +69,9 @@ export default function HeroLeadForm() {
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success !== false) {
         setDone(true);
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'generate_lead', { event_category: 'Hero Form', event_label: help });
-        }
+        trackEvent('callback_submit', { form_location: location, help_topic: help });
+        window.location.href = '/contact/thank-you?source=callback';
+        return;
       } else {
         setTurnstileToken('');
         setTurnstileKey((key) => key + 1);
@@ -77,7 +86,7 @@ export default function HeroLeadForm() {
     }
   };
 
-  if (done) {
+  if (done && !embedded) {
     return (
       <div className="rounded-2xl bg-white border border-slate-200 shadow-xl p-7 sm:p-8 text-center" role="status">
         <div className="w-14 h-14 mx-auto rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -95,13 +104,17 @@ export default function HeroLeadForm() {
     <form
       onSubmit={submit}
       noValidate
-      className="rounded-2xl bg-white border border-slate-200 shadow-xl p-6 sm:p-8"
-      aria-labelledby="hero-form-title"
+      className={embedded ? 'space-y-4' : 'rounded-2xl bg-white border border-slate-200 shadow-xl p-6 sm:p-8'}
+      aria-labelledby={embedded ? undefined : 'hero-form-title'}
     >
-      <h2 id="hero-form-title" className="text-2xl font-extrabold tracking-tight text-slate-900">
-        Request a call back
-      </h2>
-      <p className="mt-1.5 text-sm text-slate-600">Tell us how to reach you. We reply within one business day.</p>
+      {!embedded && (
+        <>
+          <h2 id="hero-form-title" className="text-2xl font-extrabold tracking-tight text-slate-900">
+            Request a call back
+          </h2>
+          <p className="mt-1.5 text-sm text-slate-600">Tell us how to reach you. We reply within one business day.</p>
+        </>
+      )}
 
       <div className="mt-6 space-y-4">
         <div>
@@ -117,6 +130,22 @@ export default function HeroLeadForm() {
             onChange={(e) => setName(e.target.value)}
             className={fieldInput}
             placeholder="Your name"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="hero-email" className={fieldLabel}>
+            Email address <span className="text-red-700" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="hero-email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={fieldInput}
+            placeholder="you@example.com"
           />
         </div>
 
@@ -186,12 +215,14 @@ export default function HeroLeadForm() {
         </Link>
         .
       </p>
-      <p className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600">
-        Prefer to choose a time?{' '}
-        <Link href="/book-an-appointment" className={`font-bold text-brand-800 hover:text-brand-950 inline-flex items-center gap-1 rounded ${focusRing}`}>
-          Book an appointment online <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-        </Link>
-      </p>
+      {!embedded && (
+        <p className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600">
+          Prefer to choose a time?{' '}
+          <Link href="/book-an-appointment" className={`font-bold text-brand-800 hover:text-brand-950 inline-flex items-center gap-1 rounded ${focusRing}`}>
+            Book an appointment online <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+          </Link>
+        </p>
+      )}
     </form>
   );
 }

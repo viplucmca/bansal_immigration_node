@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import AnalyticsListener from "@/components/analytics/AnalyticsListener";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import CookieConsent from "@/components/layout/CookieConsent";
 import { TurnstileSiteKeyProvider } from "@/components/forms/TurnstileSiteKey";
 import { getTurnstileSiteKey } from "@/lib/turnstile";
 
@@ -12,29 +15,31 @@ const inter = Inter({
   display: "swap",
 });
 
+const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bansalimmigration.com.au"),
-  title: "Registered Migration Agents Melbourne - Bansal Immigration Consultants",
+  title: {
+    default:
+      "Registered Migration Agents Melbourne & Adelaide | Bansal Immigration",
+    template: "%s | Bansal Immigration",
+  },
   description:
-    "MARN listed registered migration agents in Melbourne for skilled, partner, student, and employer-sponsored visas. Fast-track your Australian PR with Bansal Immigration.",
+    "OMARA-registered migration agents in Melbourne and Adelaide for skilled, partner, student and employer-sponsored visas.",
   icons: {
     icon: "/img/logo/favicon.webp",
+    apple: "/img/logo/favicon.png",
   },
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    noarchive: true,
-    nosnippet: true,
-    noimageindex: true,
-    googleBot: {
-      index: false,
-      follow: false,
-      noarchive: true,
-      nosnippet: true,
-      noimageindex: true,
-    },
-  },
+  robots: isProduction
+    ? { index: true, follow: true }
+    : {
+        index: false,
+        follow: false,
+        nocache: true,
+        noarchive: true,
+        nosnippet: true,
+        noimageindex: true,
+      },
 };
 
 export default function RootLayout({
@@ -44,15 +49,18 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="en-AU"
       className={`${inter.variable} h-full scroll-smooth`}
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col font-sans antialiased text-gray-900 bg-white"
+        className="min-h-full flex flex-col font-sans antialiased text-gray-900 bg-white pb-20 md:pb-0"
         suppressHydrationWarning
       >
         <TurnstileSiteKeyProvider siteKey={getTurnstileSiteKey()}>
+          <GoogleAnalytics />
+          <AnalyticsListener />
+          <CookieConsent />
           <Header />
           <main id="main-content" className="flex-1">
             {children}

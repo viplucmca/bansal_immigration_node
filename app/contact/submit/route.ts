@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
       message,
       form_source = "website_callback",
       form_variant = "callback",
+      urgent,
       website_honeypot,
       bot_field,
       cf_turnstile_response,
@@ -54,7 +55,9 @@ export async function POST(req: NextRequest) {
     const leadName = (name || "").trim();
     const leadEmail = (email || contact_email || "").trim();
     const leadPhone = (phone || contact_phone || "").trim();
-    const leadSubject = (subject || "General Consultation").trim();
+    const leadSubject = urgent
+      ? `[URGENT] ${(subject || "Visa refused or cancelled").trim()}`
+      : (subject || "General Consultation").trim();
     const leadMessage = (message || "Requested call back from homepage").trim();
 
     const fieldError =

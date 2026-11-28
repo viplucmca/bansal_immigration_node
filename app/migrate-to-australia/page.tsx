@@ -465,8 +465,8 @@ export default function Page() {
           </ul>
           <p className="mt-8 text-slate-700">
             Still unsure?{' '}
-            <Link href="/#find-my-visa" className={textLink}>
-              Try our Find my visa quiz
+            <Link href="/#pathways" className={textLink}>
+              browse visa pathways on the home page
             </Link>{' '}
             or{' '}
             <Link href="/book-an-appointment" className={textLink}>

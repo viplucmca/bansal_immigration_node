@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Calendar, RotateCcw, Calculator } from "lucide-react";
 import { card, btnPrimaryLight, btnGhostLight, focusRing } from "@/components/ui/brand";
+import { trackEvent } from "@/lib/analytics/events";
 
 type ResultLink = { label: string; href: string };
 type Result = {
@@ -294,6 +295,14 @@ export default function FindMyVisaQuiz() {
     }
     headingRef.current?.focus();
   }, [path]);
+
+  useEffect(() => {
+    if (path.length === 1) trackEvent('quiz_start', { location: 'quiz' });
+  }, [path.length]);
+
+  useEffect(() => {
+    if (result) trackEvent('quiz_finish', { location: 'quiz', result_title: result.title });
+  }, [result]);
 
   const stepNumber = path.length + 1;
 

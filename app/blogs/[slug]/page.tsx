@@ -15,7 +15,9 @@ import {
   Check,
 } from 'lucide-react';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
 import { getBlog, getRelatedBlogs } from '@/lib/db';
+import { buildArticleSchema } from '@/lib/seo/articleSchema';
 
 /** A post is read from the database on each request so a new article does not wait for a rebuild. */
 export const dynamic = 'force-dynamic';
@@ -83,9 +85,19 @@ export default async function BlogDetailPage({
       : blog.author;
 
   const currentUrl = `https://www.bansalimmigration.com.au/blogs/${blog.slug}`;
+  const articleLd = buildArticleSchema({
+    headline: blog.title,
+    slug: blog.slug,
+    image: img,
+    datePublished: blog.published_at || blog.created_at,
+    dateModified: blog.updated_at || blog.published_at,
+    authorName: displayAuthor.replace(/\s*\(MARN.*\)/, '').trim(),
+    authorMarn: '2418466',
+  });
 
   return (
     <div className="bg-slate-50/60 min-h-screen">
+      <JsonLd data={articleLd} />
       {/* Breadcrumb Navigation */}
       <div className="border-b border-slate-200/80 bg-white">
         <Breadcrumbs
