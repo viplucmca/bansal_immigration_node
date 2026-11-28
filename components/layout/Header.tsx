@@ -335,24 +335,22 @@ export default function Header() {
       >
         Skip to main content
       </a>
-      <div className="bg-brand-950 text-white text-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
-          <p className="font-semibold">
-            <span className="text-brand-300">Urgent:</span> Visa refused or deadline approaching?
-          </p>
-          <a
-            href={CONTACT.phoneHref}
-            className={`inline-flex items-center gap-1.5 font-bold underline underline-offset-2 decoration-brand-400 hover:text-brand-200 rounded ${focusDark}`}
-          >
-            <Phone aria-hidden="true" className="w-3.5 h-3.5" />
-            Call {CONTACT.phone}
-          </a>
+      <div className="sticky top-0 z-50">
+        <div className="bg-brand-950 text-white text-sm border-b border-brand-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+            <p className="font-semibold">
+              <span className="text-brand-300">Urgent:</span> Visa refused or deadline approaching?
+            </p>
+            <a
+              href={CONTACT.phoneHref}
+              className={`inline-flex items-center gap-1.5 font-bold underline underline-offset-2 decoration-brand-400 hover:text-brand-200 rounded ${focusDark}`}
+            >
+              <Phone aria-hidden="true" className="w-3.5 h-3.5" />
+              Call {CONTACT.phone}
+            </a>
+          </div>
         </div>
-      </div>
-      <header
-        ref={headerRef}
-        className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-xs"
-      >
+        <header ref={headerRef} className="bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[72px] gap-3">
             <Link href="/" className={`shrink-0 rounded-lg ${focus}`} aria-label="Bansal Immigration Consultants home">
@@ -653,6 +651,7 @@ export default function Header() {
           </div>
         </div>
       </header>
+      </div>
 
       {/* Mobile drawer */}
       {mobileOpen && (

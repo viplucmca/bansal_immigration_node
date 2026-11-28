@@ -200,27 +200,6 @@ export default async function HomePage() {
                 Book a Consultation
               </Link>
               <p className="mt-3 text-xs text-slate-500">Takes about two minutes. You see the fee before you confirm.</p>
-
-              <div className="mt-8">
-                <p className="text-sm font-bold text-slate-900">Your advisers</p>
-                <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-4">
-                  {expertTeam.map((a) => (
-                    <li key={a.name}>
-                      <Link href={a.profileHref} className={`group flex items-center gap-3 rounded-lg ${focusRing}`}>
-                        <span className="relative w-12 h-12 rounded-full overflow-hidden bg-brand-100 border border-slate-200 shrink-0">
-                          <Image src={a.image} alt="" fill sizes="48px" className="object-cover object-top" />
-                        </span>
-                        <span className="leading-tight">
-                          <span className="block text-sm font-bold text-slate-900 group-hover:underline underline-offset-4 decoration-brand-600 decoration-2">
-                            {a.name}
-                          </span>
-                          {a.marn && <span className="block text-xs text-slate-600">MARN {a.marn}</span>}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
 
             <div className="lg:col-span-5">
@@ -300,6 +279,7 @@ export default async function HomePage() {
 
       <WhyChooseSection />
       <ClearFeesSection />
+      <AppointmentChecklist />
 
       {/* 5. GOOGLE REVIEWS and VIDEO STORIES */}
       <section className="py-16 lg:py-24 bg-[#f4f4f4] border-y border-slate-200/80">
@@ -365,15 +345,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <AppointmentChecklist />
+      <HomeLatestNews />
 
       {/* 7. TEAM */}
       <section className="py-16 lg:py-24">
         <div className={container}>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <SectionHeader
-              title="Meet our migration team"
-              lede="Our registered migration agents work under the Migration Agents Code of Conduct. Read each profile and check their registration yourself."
+              title="Meet our registered migration agents"
+              lede="Our agents work under the Migration Agents Code of Conduct. Read each profile and check their registration on the OMARA register."
             />
             <Link href="/team" className={btnGhostLight}>
               Meet the whole team
@@ -415,8 +395,8 @@ export default async function HomePage() {
       <section id="offices" className="py-16 lg:py-24 bg-brand-50 border-y border-brand-100 scroll-mt-20">
         <div className={container}>
           <SectionHeader
-            title="Visit us in Melbourne or Adelaide"
-            lede="Meet us in person, or by phone or video. Monday to Friday, 9:30 am to 6:00 pm. Closed Saturday and Sunday."
+            title="Visit our Melbourne and Adelaide offices"
+            lede="Meet us in person, or by phone or video. Monday to Friday, 9:30 am to 6:00 pm. Please book before you visit so an adviser can confirm availability."
           />
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
             {OFFICES.map((o) => (
@@ -506,8 +486,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      <HomeLatestNews />
     </div>
   );
 }
